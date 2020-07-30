@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "810737035299",
+    "firebase_url": "https://fcmtest-7b22f.firebaseio.com",
+    "project_id": "fcmtest-7b22f",
+    "storage_bucket": "fcmtest-7b22f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810737035299:android:4f4595d6e119da395c2996",
+        "android_client_info": {
+          "package_name": "com.orangeline.fcm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810737035299-crqu2g26sm27n7t0qbqta4v66u8u6v0i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI065Zp6dTqXi7LVHLjC8jIIG6NZes_ts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810737035299-crqu2g26sm27n7t0qbqta4v66u8u6v0i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
