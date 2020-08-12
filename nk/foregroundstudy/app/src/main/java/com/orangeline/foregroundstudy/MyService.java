@@ -12,10 +12,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-
-import org.apache.http.conn.ConnectTimeoutException;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,8 +42,15 @@ public class MyService extends Service {
         createNotificationChannel();    // 여기까지는 채널 생성
         createHeadsUpNotificationChannel();     // heads up 채널 생성
 
+        //startActivity(new Intent(this, MainActivity.class).setAction(Intent.ACTION_MAIN) .addCategory(Intent.CATEGORY_LAUNCHER) .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+
         // 포그라운드 알림 설정 //
         Intent notificationIntent = new Intent(this, MyService.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN)
+                .addCategory(Intent.CATEGORY_LAUNCHER)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         //String input = intent.getStringExtra("inputExtra");
@@ -61,8 +65,8 @@ public class MyService extends Service {
 
         // heads up 알림 설정 //
         fullScreenIntent = new Intent(this, MyService.class);       // MainActivity로 하면 무한 실행됨.
-        fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
-                fullScreenIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, 0);
+
 
         builder = new NotificationCompat.Builder(this, "HeadsUpNotificationChannel")
                 .setSmallIcon(R.drawable.ic_launcher_background)
@@ -142,5 +146,6 @@ public class MyService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("test", "onDestroy() 호출");
     }
 }
