@@ -1,18 +1,16 @@
 {
 	"users": {
-		"u1": {
-			"ID": 123,
-			"contact": "010-2608-8253",
+		"123": {
+			"contact": "01026088253",
 			"address": "seoul"
 		}
 	},
 
 	"room": {
-		"r1": {
+		"0812001": {
 			"location": "seoul",
 			"member": {
-				"m1": {
-					"ID": 123,
+				"123": {
 					"time": {
 						"hour": 23,
 						"minute": 0
@@ -20,7 +18,6 @@
 					"status": "not"
 				}
 			}
-
 		}
 	}
 }
