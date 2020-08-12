@@ -1,0 +1,24 @@
+{
+	"users": {
+		"ID": 123{
+			"contact": 26088253,
+			"address": "seoul",
+			}
+		}
+	
+	"room": {
+		"No": 1{
+			"location": "seoul",
+			"member":{
+				"ID": 123{
+					"time": {
+							"hour": 23,
+							"minute": 00
+							}
+					"status": 1,
+				}
+			}
+		}
+	}
+}
+				
