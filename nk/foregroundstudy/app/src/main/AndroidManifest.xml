@@ -2,37 +2,34 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.orangeline.foregroundstudy">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-
     <application
-        android:launchMode="singleInstance"
-        android:excludeFromRecents="true"
-        android:taskAffinity=""
-
-
         android:allowBackup="true"
+        android:excludeFromRecents="true"
         android:icon="@mipmap/ic_launcher"
         android:label="술기로운 귀가생활"
+        android:launchMode="singleInstance"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:taskAffinity=""
         android:theme="@style/AppTheme">
 
         <service
+            android:name=".AddAlarm"
+            android:enabled="true"
+            android:exported="false"/>
+        <service
             android:name=".MyService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -47,12 +44,11 @@
             android:enabled="true"
             android:exported="false"
             android:label="STARTReceiver">
-
-            <intent-filter >
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
+        <receiver android:name=".Alarm" />
     </application>
 
 </manifest>
