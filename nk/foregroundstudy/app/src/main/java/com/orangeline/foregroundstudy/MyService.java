@@ -32,6 +32,7 @@ public class MyService extends Service {
     Toast toast;
 
     public MyService() {
+
     }
 
     @Override
@@ -51,14 +52,13 @@ public class MyService extends Service {
                 .addCategory(Intent.CATEGORY_LAUNCHER)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        //String input = intent.getStringExtra("inputExtra");
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("술기로운 귀가생활")
                 .setContentText("안전한 귀가를 위해 앱이 실행 중 입니다.")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentIntent(pendingIntent)
+                //.setContentIntent(pendingIntent)
                 .setPriority(Notification.PRIORITY_MAX)
                 .build();
 
@@ -106,13 +106,12 @@ public class MyService extends Service {
 
         };
 
-
         timer.schedule(TT, 0, 10000); //Timer 실행
 
 
         startForeground(1, notification);
 
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     private void createNotificationChannel() {      // 알림 채널 만들기
@@ -121,7 +120,7 @@ public class MyService extends Service {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
             );
 
             NotificationManager manager = (NotificationManager) getSystemService(NotificationManager.class);
@@ -146,6 +145,8 @@ public class MyService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("test", "onDestroy() 호출");
+        Log.d("test", "서비스의 onDestroy() 호출");
+        stopForeground(true);
     }
+
 }

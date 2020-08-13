@@ -10,10 +10,8 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
-import android.text.AlteredCharSequence;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -28,7 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,31 +51,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //startService();
+        Log.d("test", "onStart");
+
+        // 메인 액티비티 화면으로 들어오면 서비스 종료.
+        Intent intent = new Intent(getApplicationContext(), MyService.class);
+        stopService(intent);
+
     }
 
-    private void checkPermission(){
-        int permissionCheck = ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS);
-
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED){      // 퍼미션 허용 되어있다면,
-            Log.d("sms", "sms permission 허용 상태");
-            Toast.makeText(this, "sms permission 허용 상태", Toast.LENGTH_LONG).show();
-            //sendSms("01040550786", "소병희 님이 도착하지 못했어요! 현재 주소는: ~_~");
-        }
-        else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)){       // 퍼미션을 거부한 적이 있다면
-                Toast.makeText(this, "sms permission 거부 상태. addPermission 문자 서비스를 원하시면 sms 권한을 허용해주세요", Toast.LENGTH_LONG).show();
-                /*ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.SEND_SMS},
-                        MY_PERMISSIONS_REQUEST_SEND_SMS);*/
-
-            } else {        // 퍼미션 거부한 적이 없다면 퍼미션 요청
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.SEND_SMS},
-                        MY_PERMISSIONS_REQUEST_SEND_SMS);
-            }
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {   // checkPermission 함수에서 퍼미션 요청
@@ -109,30 +89,21 @@ public class MainActivity extends AppCompatActivity {
 
         checkPermission();        // 퍼미션 체크 -> 없으면 허용 하도록 앱 실행할 때 퍼미션 체크
 
-        start = (Button)findViewById(R.id.start);
-        dbbtn = (Button)findViewById(R.id.db);
-        send = (Button)findViewById(R.id.send);
+        start = findViewById(R.id.start);
+        dbbtn = findViewById(R.id.db);
+        send = findViewById(R.id.send);
 
         send.setOnClickListener(new View.OnClickListener(){     // sms 보내기
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {       // send 버튼 누르면 문자 보냄
                 sendSms("01040550786", "소병희 님이 도착하지 못했어요! 현재 주소는: ~_~");
-            }
-        });
-
-        start.setOnClickListener(new View.OnClickListener(){        // 포그라운드 서비스 종료
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MyService.class);
-                stopService(intent);
-                Log.d("test", "버튼 클릭");
             }
         });
 
 
         // db 읽기
         listView = (ListView) findViewById(R.id.listviewmsg);
-        initDatabase();
+        initDatabase();     // 이걸 통해서 child listener를 달아주는거 같음.
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
         listView.setAdapter(adapter);
 
@@ -167,12 +138,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("test", "invisible");
+        startService();     // main activity 화면 닫으면 서비스 시작
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("test", "in onDestroy");
+    }
+
+    public void startService(){
+        Log.d("test", "startService 실행");
+
+        Intent serviceIntent = new Intent(getApplicationContext(), MyService.class);
+        startService(serviceIntent);
+        //serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");      // Myservice에서 name이 inputExtra인 intent를 가져오는 듯.
+        //ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
     private void initDatabase() {
 
         mDatabase = FirebaseDatabase.getInstance();
 
-        mReference = mDatabase.getReference("log");
-        mReference.child("log").setValue("check");
+        mReference = mDatabase.getReference();
 
         mChild = new ChildEventListener() {
             @Override
@@ -203,13 +195,27 @@ public class MainActivity extends AppCompatActivity {
         mReference.addChildEventListener(mChild);
     }
 
-    public void startService(){
-        Log.d("test", "startService 실행");
+    private void checkPermission(){
+        int permissionCheck = ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS);
 
-        Intent serviceIntent = new Intent(this, MyService.class);
-        //serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");      // Myservice에서 name이 inputExtra인 intent를 가져오는 듯.
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED){      // 퍼미션 허용 되어있다면,
+            Log.d("sms", "sms permission 허용 상태");
+            Toast.makeText(this, "sms permission 허용 상태", Toast.LENGTH_LONG).show();
+            //sendSms("01040550786", "소병희 님이 도착하지 못했어요! 현재 주소는: ~_~");
+        }
+        else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)){       // 퍼미션을 거부한 적이 있다면
+                Toast.makeText(this, "sms permission 거부 상태. addPermission 문자 서비스를 원하시면 sms 권한을 허용해주세요", Toast.LENGTH_LONG).show();
+                /*ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SEND_SMS},
+                        MY_PERMISSIONS_REQUEST_SEND_SMS);*/
 
-        ContextCompat.startForegroundService(this, serviceIntent);
+            } else {        // 퍼미션 거부한 적이 없다면 퍼미션 요청
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SEND_SMS},
+                        MY_PERMISSIONS_REQUEST_SEND_SMS);
+            }
+        }
     }
 
     private void sendSms(String num, String msg){
