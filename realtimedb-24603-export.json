@@ -16,14 +16,44 @@
           }
         }
       },
-      "num" : "1"
+      "num" : 1
+    },
+    "0815001" : {
+      "date" : {
+        "day" : "1",
+        "month" : "9",
+        "year" : "2020"
+      },
+      "location" : "seoul",
+      "member" : {
+        "123" : {
+          "status" : "not",
+          "time" : {
+            "hour" : "23",
+            "minute" : "30"
+          }
+        },
+        "456" : {
+          "status" : "not",
+          "time" : {
+            "hour" : "23",
+            "minute" : "10"
+          }
+        }
+      },
+      "num" : 2
     }
   },
   "users" : {
     "123" : {
       "address" : "seoul",
       "contact" : "01026088253",
-      "room" : [ "0812001" ]
+      "room" : [ "0812001", "0815001" ]
+    },
+    "456" : {
+      "address" : "seoul",
+      "contact" : "010********",
+      "room" : [ "0815001" ]
     }
   }
 }
