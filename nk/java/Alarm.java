@@ -22,15 +22,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Alarm extends BroadcastReceiver {
+public class Alarm extends BroadcastReceiver {      // 알람 울리도록, AddAlarm에서 만든 알람 시간이 되면 Alarm에서 알람 울림.
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         Toast.makeText(context, "알람~!!", Toast.LENGTH_SHORT).show();    // AVD 확인용
         Log.e("Alarm", "알람입니다.");    // 로그 확인용
-        Intent addalarm = new Intent(context.getApplicationContext(), AddAlarm.class);
-        context.startService(addalarm);
+
         /*Intent serviceIntent = new Intent(context.getApplicationContext(), MyService.class);
         if (Build.VERSION.SDK_INT >= 26) {
             context.startForegroundService(serviceIntent);

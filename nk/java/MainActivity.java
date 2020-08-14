@@ -37,20 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private Button dbbtn;
     private Button send;
 
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference;
-    //private DatabaseReference timeref;
-    //private DatabaseReference dateref;
-
-    private ListView listView;
-    private ArrayAdapter<String> adapter;
-    List<Object> Array = new ArrayList<>();
-
-    String UserID = "123";
-    String phonenum;
-
     private final int MY_PERMISSIONS_REQUEST_SEND_SMS = 1001;
-
 
     @Override
     protected void onStart() {
@@ -81,57 +68,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {       // send 버튼 누르면 문자 보냄
                 sendSms("01040550786", "소병희 님이 도착하지 못했어요! 현재 주소는: ~_~");
-            }
-        });
-
-
-        // db 읽기
-        listView = (ListView) findViewById(R.id.listviewmsg);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
-        listView.setAdapter(adapter);
-
-        mDatabase = FirebaseDatabase.getInstance();
-
-
-
-        mReference = mDatabase.getReference("room/0812001/member").child(UserID).child("time"); // 변경값을 확인할 child 이름
-        dbbtn.setOnClickListener(new View.OnClickListener(){        // db 읽기
-            @Override
-            public void onClick(View v) {
-                mReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int month = 0;
-                        int date = 0;
-                        int hour = 0;
-                        int minute = 0;
-
-                        for (DataSnapshot messageData : dataSnapshot.getChildren()) {
-                            String msg2 = messageData.getValue().toString();
-                            Log.d("dbdbdbdbdbdb", msg2);
-                            Array.add(msg2);
-                            adapter.add(msg2);
-                            // child 내에 있는 데이터만큼 반복합니다.
-                        }
-
-                        adapter.notifyDataSetChanged();
-                        listView.setSelection(adapter.getCount() - 1);
-                        hour = Integer.parseInt((String) Array.get(0));
-                        minute = Integer.parseInt((String) Array.get(1));
-                        Log.d("dbdbdbdbdb", (String) Array.get(1));
-                        Log.d("intt", String.valueOf(hour));
-                        Log.d("intt", String.valueOf(minute));
-
-
-                        phonenum = (String) Array.get(1);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
             }
         });
 

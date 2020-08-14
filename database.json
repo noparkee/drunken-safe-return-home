@@ -2,7 +2,8 @@
 	"users": {
 		"123": {
 			"contact": "01026088253",
-			"address": "seoul"
+			"address": "seoul",
+			"room": ["0812001", "0831001"]
 		}
 	},
 
@@ -22,7 +23,7 @@
 			"date": {
 				"month": 8,
 				"day": 31
-				}
+			}
 		}
 	}
 }
