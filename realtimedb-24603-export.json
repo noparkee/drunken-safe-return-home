@@ -1,44 +1,27 @@
 {
   "room" : {
     "0812001" : {
-      "date" : {
-        "day" : "31",
-        "month" : "8",
-        "year" : "2020"
-      },
+      "date" : "2020-08-19T18:00:00",
       "location" : "seoul",
       "member" : {
         "123" : {
           "status" : "not",
-          "time" : {
-            "hour" : "23",
-            "minute" : "0"
-          }
+          "time" : "2020-08-19T21:10:00"
         }
       },
       "num" : 1
     },
     "0815001" : {
-      "date" : {
-        "day" : "1",
-        "month" : "9",
-        "year" : "2020"
-      },
+      "date" : "2020-09-01T20:00:00",
       "location" : "seoul",
       "member" : {
         "123" : {
           "status" : "not",
-          "time" : {
-            "hour" : "23",
-            "minute" : "30"
-          }
+          "time" : "2020-09-01T23:30:00"
         },
         "456" : {
           "status" : "not",
-          "time" : {
-            "hour" : "23",
-            "minute" : "10"
-          }
+          "time" : "2020-09-02T01:30:00"
         }
       },
       "num" : 2
@@ -47,8 +30,8 @@
   "users" : {
     "123" : {
       "address" : "seoul",
-      "contact" : "01026088253",
-      "room" : [ "0812001", "0815001" ]
+      "contact" : "01040550786",
+      "room" : [ "0812001" ]
     },
     "456" : {
       "address" : "seoul",
