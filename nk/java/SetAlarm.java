@@ -4,24 +4,28 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 
 
 public class SetAlarm extends Service {
 
     String tag = "SetAlarm";
-
     String UserID = "123";
 
     public SetAlarm() {
@@ -63,22 +67,58 @@ public class SetAlarm extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopSelf();
         Log.d("SetAlarm", "onDestroy()");
     }
 
-    private void getMeeting(String roomid){              // getMeeting이랑 getTime은 child리스너가 더 좋을거 같은데 Meeting meeting = snapshot.getValue(Meeting.class) 이런 식으로 하면 에러
+    private void getMeeting(final String roomid){              // getMeeting이랑 getTime은 child리스너가 더 좋을거 같은데 Meeting meeting = snapshot.getValue(Meeting.class) 이런 식으로 하면 에러
         Log.d(tag, "in getMeeting()");             // 일단은 value 리스너로 해놓긴 하는데, 그러면 삭제되거나 변경됐을 때 어카지? 흠흠 이거 고민해보자.
         Log.d(tag, roomid);                             // 잘 하면 상관없을 수도.
-        final String id = roomid;
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference roomdate = mDatabase.getReference("room").child(roomid).child("date");
+        DatabaseReference roomdate = mDatabase.getReference("room").child(roomid).child("member").child(UserID).child("time");
+        /*roomdate.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                String meeting = snapshot.getValue().toString();
+                LocalDateTime meettime = LocalDateTime.parse(meeting);
+                Log.e(tag, "changed!!!: " + meeting);
+
+                addAlarm(Integer.parseInt(roomid), meettime);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                String meeting = snapshot.getValue().toString();
+                LocalDateTime meettime = LocalDateTime.parse(meeting);
+                Log.e(tag, "changed!!!: " + meeting);
+
+                addAlarm(Integer.parseInt(roomid), meettime);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });*/
         roomdate.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Meeting meeting = snapshot.getValue(Meeting.class);
-                Log.e(tag, "changed!!!");
-                getTime(id, meeting);
+                String meeting = snapshot.getValue().toString();
+                LocalDateTime meettime = LocalDateTime.parse(meeting);
+                Log.e(tag, "changed!!!: " + meeting);
+
+                addAlarm(Integer.parseInt(roomid), meettime);
             }
 
             @Override
@@ -88,46 +128,29 @@ public class SetAlarm extends Service {
         });
     }
 
-    private void getTime(final String roomid, final Meeting m){
-        Log.d(tag, "in getTime()");
-        Log.d(tag, roomid);
-
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference timeref = mDatabase.getReference("room").child(roomid).child("member").child(UserID).child("time");
-        timeref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Hometime htime = snapshot.getValue(Hometime.class);
-
-                addAlarm(Integer.parseInt(roomid), m, htime);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    private void addAlarm(int reqcode, Meeting m, Hometime t){     // 알람 추가
+    private void addAlarm(int reqcode, LocalDateTime t){     // 알람 추가
         Log.d(tag, "addAlarm()");
-        Log.d(tag, m.getYear() + m.getMonth() + m.getDay() + t.getHour() + t.getMinute());
-        AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(ALARM_SERVICE);
-        Calendar calendar = Calendar.getInstance();
+        System.out.println(t.getHour() + "시 "+ t.getMinute() + "분" + t.getYear() + "년" + t.getMonthValue() + "월" + t.getDayOfMonth()+"일");
+        System.out.println(t);
 
-        Intent intent = new Intent(this, Alarm.class);
-        PendingIntent pIntent = PendingIntent.getBroadcast(this, reqcode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        calendar.set(Calendar.YEAR, Integer.parseInt(m.getYear()));
-        calendar.set(Calendar.MONTH, Integer.parseInt(m.getMonth())-1);      // n월 이면 int형으론 n-1 // 즉 8월이면 int형으론 7
-        calendar.set(Calendar.DATE, Integer.parseInt(m.getDay()));
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(t.getHour()));
-        calendar.set(Calendar.MINUTE, Integer.parseInt(t.getMinute()));
-        calendar.set(Calendar.SECOND, 0);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+        if (t.isAfter(LocalDateTime.now())) {
+            Log.d(tag, "알람 추가하자!");
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            Calendar calendar = Calendar.getInstance();
 
-        Intent sel = new Intent(this, SetAlarm.class);
-        stopService(sel);
-        stopSelf();
+            Intent intent = new Intent("android.intent.action.ALARM_START");
+            PendingIntent pIntent = PendingIntent.getBroadcast(this, reqcode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            calendar.set(Calendar.YEAR, t.getYear());
+            calendar.set(Calendar.MONTH, t.getMonthValue());      // n월 이면 int형으론 n-1 // 즉 8월이면 int형으론 7
+            calendar.set(Calendar.DATE, t.getDayOfMonth());
+            calendar.set(Calendar.HOUR_OF_DAY, t.getHour());
+            calendar.set(Calendar.MINUTE, t.getMinute());
+
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+        }
+
+        //stopSelf();
     }
 
     private void delAlarm(int reqcode){     // 알람 삭제
@@ -142,9 +165,6 @@ public class SetAlarm extends Service {
             alarmManager.cancel(pIntent);
             pIntent.cancel();
         }
-
-        Intent sel = new Intent(this, SetAlarm.class);
-        stopService(sel);
-        stopSelf();
     }
+
 }

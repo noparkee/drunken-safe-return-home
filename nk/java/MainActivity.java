@@ -71,6 +71,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MyService.class);
+                stopService(intent);
+            }
+        });
+
     }
 
     @Override
@@ -127,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
         if (permissionCheck == PackageManager.PERMISSION_GRANTED){      // 퍼미션 허용 되어있다면,
             Log.d("sms", "sms permission 허용 상태");
             Toast.makeText(this, "sms permission 허용 상태", Toast.LENGTH_LONG).show();
-            //sendSms("01040550786", "소병희 님이 도착하지 못했어요! 현재 주소는: ~_~");
         }
         else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)){       // 퍼미션을 거부한 적이 있다면
