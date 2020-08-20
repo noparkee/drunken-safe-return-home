@@ -21,11 +21,28 @@
         android:supportsRtl="true"
         android:taskAffinity=""
         android:theme="@style/AppTheme">
+        <service
+            android:name=".ReadRoomDatabase"
+            android:enabled="true"
+            android:exported="false"></service>
+        <service
+            android:name=".ReadUserDatabase"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name=".Alarm"
+            android:enabled="true"
+            android:exported="true" />
 
         <service
-            android:name=".AddAlarm"
+            android:name=".ReadDatabase"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
+        <service
+            android:name=".SetAlarm"
+            android:enabled="true"
+            android:exported="false" />
         <service
             android:name=".MyService"
             android:enabled="true"
@@ -48,7 +65,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".Alarm" />
     </application>
 
 </manifest>

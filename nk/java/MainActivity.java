@@ -2,6 +2,7 @@ package com.orangeline.foregroundstudy;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -28,25 +29,34 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity<Private> extends AppCompatActivity {
     private Button start;
     private Button dbbtn;
     private Button send;
+    private Button test;
+    private Button set;
+
+    private String date;
+    private String loc;
+    private int roomid = 0;
 
     private final int MY_PERMISSIONS_REQUEST_SEND_SMS = 1001;
+
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+
+    private int a = 4;
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d("test", "onStart");
-
-        // 메인 액티비티 화면으로 들어오면 서비스 종료.
-        //Intent intent = new Intent(getApplicationContext(), MyService.class);
-        //stopService(intent);        // >> service의 onDestroy()로 이동.
 
         startService();
     }
@@ -63,6 +73,39 @@ public class MainActivity extends AppCompatActivity {
         start = findViewById(R.id.start);
         dbbtn = findViewById(R.id.db);
         send = findViewById(R.id.send);
+        test = findViewById(R.id.test);
+        set = findViewById(R.id.set);
+
+        set.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                date = "2020-08-21 16:00";
+                loc = "Anam";
+            }
+        });
+
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {       // db에 추가! 유저부분에
+
+                databaseReference.child("users").child("123").child("room").child(String.valueOf(roomid)).child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                databaseReference.child("users").child("123").child("room").child(String.valueOf(roomid)).child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+
+                databaseReference.child("room").child(String.valueOf(roomid)).child("date").setValue(date);
+                databaseReference.child("room").child(String.valueOf(roomid)).child("location").setValue(loc);
+
+                roomid++;
+            }
+        });
+
+        final Intent database = new Intent(this, ReadUserDatabase.class);
+
+        dbbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startService(database);
+            }
+        });
 
         send.setOnClickListener(new View.OnClickListener(){     // sms 보내기
             @Override

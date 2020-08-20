@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 
@@ -47,8 +48,8 @@ public class SetAlarm extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(tag, "onStartCommand()");
 
-        String addroom = intent.getStringExtra("addvalue");         // 음 이게 왜 항상 addvalue가 나올까?
-        String delroom = intent.getStringExtra("delvalue");
+        String addroom = intent.getStringExtra("addkey");
+        String delroom = intent.getStringExtra("delkey");
 
         Log.d(tag, "전달받은 데이터\naddroom: " + addroom + " delroom: " + delroom);
 
@@ -76,13 +77,14 @@ public class SetAlarm extends Service {
         Log.d(tag, roomid);                             // 잘 하면 상관없을 수도.
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference roomdate = mDatabase.getReference("room").child(roomid).child("member").child(UserID).child("time");
+        DatabaseReference roomdate = mDatabase.getReference("users").child(UserID).child("room").child(roomid).child("arrtime");
         /*roomdate.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 String meeting = snapshot.getValue().toString();
-                LocalDateTime meettime = LocalDateTime.parse(meeting);
-                Log.e(tag, "changed!!!: " + meeting);
+                //LocalDateTime meettime = LocalDateTime.parse(meeting);      // T가 있을 때
+                LocalDateTime meettime = LocalDateTime.parse(meeting, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));    // T가 없을 때
+                Log.e(tag, "added!!!: " + meeting);
 
                 addAlarm(Integer.parseInt(roomid), meettime);
             }
@@ -90,7 +92,8 @@ public class SetAlarm extends Service {
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 String meeting = snapshot.getValue().toString();
-                LocalDateTime meettime = LocalDateTime.parse(meeting);
+                //LocalDateTime meettime = LocalDateTime.parse(meeting);
+                LocalDateTime meettime = LocalDateTime.parse(meeting, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));    // T가 없을 때
                 Log.e(tag, "changed!!!: " + meeting);
 
                 addAlarm(Integer.parseInt(roomid), meettime);
@@ -115,9 +118,11 @@ public class SetAlarm extends Service {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String meeting = snapshot.getValue().toString();
-                LocalDateTime meettime = LocalDateTime.parse(meeting);
-                Log.e(tag, "changed!!!: " + meeting);
+                //LocalDateTime meettime = LocalDateTime.parse(meeting);
+                LocalDateTime meettime = LocalDateTime.parse(meeting, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));    // T가 없을 때
 
+                Log.e(tag, "changed!!!: " + meettime);
+                System.out.println(meettime.getClass().getName());
                 addAlarm(Integer.parseInt(roomid), meettime);
             }
 
@@ -138,7 +143,7 @@ public class SetAlarm extends Service {
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             Calendar calendar = Calendar.getInstance();
 
-            Intent intent = new Intent("android.intent.action.ALARM_START");
+            Intent intent = new Intent(this, Alarm.class);
             PendingIntent pIntent = PendingIntent.getBroadcast(this, reqcode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             calendar.set(Calendar.YEAR, t.getYear());
