@@ -1,15 +1,11 @@
 package com.orangeline.foregroundstudy;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -17,30 +13,23 @@ import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
-public class MainActivity<Private> extends AppCompatActivity {
-    private Button start;
+public class MainActivity extends AppCompatActivity {
+    String UserID = "123";
+    private Button enterroom;
     private Button dbbtn;
-    private Button send;
+    private Button makeroom;
     private Button test;
     private Button set;
+    private Button roomdb;
 
     private String date;
     private String loc;
@@ -70,11 +59,12 @@ public class MainActivity<Private> extends AppCompatActivity {
 
         checkPermission();        // 퍼미션 체크 -> 없으면 허용 하도록 앱 실행할 때 퍼미션 체크
 
-        start = findViewById(R.id.start);
+        enterroom = findViewById(R.id.enterroom);
         dbbtn = findViewById(R.id.db);
-        send = findViewById(R.id.send);
+        makeroom = findViewById(R.id.makeroom);
         test = findViewById(R.id.test);
         set = findViewById(R.id.set);
+        roomdb = findViewById(R.id.roomdb);
 
         set.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -98,27 +88,36 @@ public class MainActivity<Private> extends AppCompatActivity {
             }
         });
 
-        final Intent database = new Intent(this, ReadUserDatabase.class);
 
         dbbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent database = new Intent(getApplicationContext(), ReadUserDatabase.class);
                 startService(database);
             }
         });
 
-        send.setOnClickListener(new View.OnClickListener(){     // sms 보내기
+        makeroom.setOnClickListener(new View.OnClickListener(){     // 방 만들었을 때의 동작 즉, 방을 처음 만든 사람의 동작
             @Override
-            public void onClick(View v) {       // send 버튼 누르면 문자 보냄
-                sendSms("01040550786", "소병희 님이 도착하지 못했어요! 현재 주소는: ~_~");
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MakeRoom.class);
+                startService(intent);
             }
         });
 
-        start.setOnClickListener(new View.OnClickListener() {
+        enterroom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {         // 방에 들어갔을 때의 동작
+                Intent intent = new Intent(getApplicationContext(), EnterRoom.class);
+                startService(intent);
+            }
+        });
+
+        roomdb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MyService.class);
-                stopService(intent);
+                Intent intent = new Intent(getApplicationContext(), ReadRoomid.class);
+                startService(intent);
             }
         });
 
@@ -134,7 +133,20 @@ public class MainActivity<Private> extends AppCompatActivity {
     protected void onDestroy() {        // 뒤로가기 버튼으로 종료하면 destroy 호출되지만, 홈버튼으로 종료하면 호출안됨.
         super.onDestroy();
         Log.d("test", "in onDestroy");
+
+        // 앱 액티비티를 종료하면 실행된 서비스 종료되도록 디비관련!
+        Intent rudb = new Intent(getApplicationContext(), ReadUserDatabase.class);
+        Intent mr = new Intent(getApplicationContext(), MakeRoom.class);
+        Intent er = new Intent(getApplicationContext(), EnterRoom.class);
+        Intent rr = new Intent(getApplicationContext(), ReadRoomid.class);
+
+        stopService(rudb);
+        stopService(mr);
+        stopService(er);
+        stopService(rr);
     }
+
+    
 
     public void startService(){
         Log.d("test", "startService 실행");
@@ -176,8 +188,9 @@ public class MainActivity<Private> extends AppCompatActivity {
         int permissionCheck = ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS);
 
         if (permissionCheck == PackageManager.PERMISSION_GRANTED){      // 퍼미션 허용 되어있다면,
-            Log.d("sms", "sms permission 허용 상태");
-            Toast.makeText(this, "sms permission 허용 상태", Toast.LENGTH_LONG).show();
+            //Log.d("sms", "sms permission 허용 상태");
+            //Toast.makeText(this, "sms permission 허용 상태", Toast.LENGTH_LONG).show();
+            //별도의 알림은 없음
         }
         else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)){       // 퍼미션을 거부한 적이 있다면

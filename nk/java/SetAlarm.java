@@ -3,6 +3,7 @@ package com.orangeline.foregroundstudy;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
@@ -11,6 +12,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -73,52 +75,16 @@ public class SetAlarm extends Service {
     }
 
     private void getMeeting(final String roomid){              // getMeeting이랑 getTime은 child리스너가 더 좋을거 같은데 Meeting meeting = snapshot.getValue(Meeting.class) 이런 식으로 하면 에러
-        Log.d(tag, "in getMeeting()");             // 일단은 value 리스너로 해놓긴 하는데, 그러면 삭제되거나 변경됐을 때 어카지? 흠흠 이거 고민해보자.
-        Log.d(tag, roomid);                             // 잘 하면 상관없을 수도.
+        Log.d(tag, "in getMeeting()");
+        Log.d(tag, roomid);
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference roomdate = mDatabase.getReference("users").child(UserID).child("room").child(roomid).child("arrtime");
-        /*roomdate.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                String meeting = snapshot.getValue().toString();
-                //LocalDateTime meettime = LocalDateTime.parse(meeting);      // T가 있을 때
-                LocalDateTime meettime = LocalDateTime.parse(meeting, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));    // T가 없을 때
-                Log.e(tag, "added!!!: " + meeting);
 
-                addAlarm(Integer.parseInt(roomid), meettime);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                String meeting = snapshot.getValue().toString();
-                //LocalDateTime meettime = LocalDateTime.parse(meeting);
-                LocalDateTime meettime = LocalDateTime.parse(meeting, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));    // T가 없을 때
-                Log.e(tag, "changed!!!: " + meeting);
-
-                addAlarm(Integer.parseInt(roomid), meettime);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });*/
         roomdate.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String meeting = snapshot.getValue().toString();
-                //LocalDateTime meettime = LocalDateTime.parse(meeting);
                 LocalDateTime meettime = LocalDateTime.parse(meeting, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));    // T가 없을 때
 
                 Log.e(tag, "changed!!!: " + meettime);
@@ -140,11 +106,14 @@ public class SetAlarm extends Service {
 
         if (t.isAfter(LocalDateTime.now())) {
             Log.d(tag, "알람 추가하자!");
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Calendar calendar = Calendar.getInstance();
 
             Intent intent = new Intent(this, Alarm.class);
             PendingIntent pIntent = PendingIntent.getBroadcast(this, reqcode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            if (pIntent != null && alarmManager != null) {
+                alarmManager.cancel(pIntent);
+            }
 
             calendar.set(Calendar.YEAR, t.getYear());
             calendar.set(Calendar.MONTH, t.getMonthValue());      // n월 이면 int형으론 n-1 // 즉 8월이면 int형으론 7
@@ -155,7 +124,7 @@ public class SetAlarm extends Service {
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
         }
 
-        //stopSelf();
+        stopSelf();
     }
 
     private void delAlarm(int reqcode){     // 알람 삭제

@@ -16,7 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class ReadUserDatabase extends Service {
+public class ReadUserDatabase extends Service {     // user 정보 읽기
     String tag = "ReadUserDataBase";
     String UserID ="123";
 
@@ -39,35 +39,29 @@ public class ReadUserDatabase extends Service {
         userref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {      // user가 있는 방이 추가 됐을 때
-                //Log.e("db", "onChildAdded: " + snapshot.getValue().toString());
                 Log.e("db", "onChildAdded: " + snapshot.getKey());
 
                 Intent setalarmservice = new Intent(getApplicationContext(), SetAlarm.class);
-                //setalarmservice.putExtra("addvalue", snapshot.getValue().toString());
                 setalarmservice.putExtra("addkey", snapshot.getKey());
                 startService(setalarmservice);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {        // 사용자가 집 가는 시간이 변경 됐을 때
-                //Log.e("db", "onChildChanged: " + snapshot.getValue().toString());
                 Log.e("db", "onChildChanged: " + snapshot.getKey());
 
                 Intent setalarmservice = new Intent(getApplicationContext(), SetAlarm.class);
-                //setalarmservice.putExtra("addvalue", snapshot.getValue().toString());
                 setalarmservice.putExtra("addkey", snapshot.getKey());
                 startService(setalarmservice);
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {        // user가 있는 방이 없어졌을 때
-                //Log.e("db", "onChildRemoved: " + snapshot.getValue().toString());
                 Log.e("db", "onChildRemoved: " + snapshot.getKey());
 
-                Intent setalarmservice = new Intent(getApplicationContext(), SetAlarm.class);
-                //setalarmservice.putExtra("delvalue", snapshot.getValue().toString());
-                setalarmservice.putExtra("delkey", snapshot.getKey());
-                startService(setalarmservice);
+                Intent deltedb = new Intent(getApplicationContext(), DeleteDatabase.class);
+                deltedb.putExtra("delroomid", snapshot.getKey());
+                startService(deltedb);
             }
 
             @Override
@@ -78,7 +72,7 @@ public class ReadUserDatabase extends Service {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("db", "왜 못 읽지?!?!");
+
             }
         });
     }
