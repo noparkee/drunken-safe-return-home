@@ -42,16 +42,18 @@ public class MakeRoom extends Service {     // 방을 만들어서 방을 처음
                 FirebaseDatabase db = FirebaseDatabase.getInstance();
                 DatabaseReference makeroom = db.getReference();
 
-                String key = snapshot.getValue().toString();
+                String key = snapshot.getValue().toString();        // key 아이디 받아옴. 방키
+                int numkey = Integer.parseInt(key);
 
                 makeroom.child("room").child(key).child("date").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))); // 방 추가
                 makeroom.child("room").child(key).child("location").setValue("Seocho");
                 makeroom.child("room").child(key).child("mem").push().setValue("123");
+                makeroom.child("room").child(key).child("num").setValue(1);     // 방을 만들 때는 인원 1
 
                 makeroom.child("users").child("123").child("room").child(key).child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 makeroom.child("users").child("123").child("room").child(key).child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 // "123" 이거는 카카오 get id 하면 될거 같음.
-
+                roomkey.setValue(++numkey);
             }
 
             @Override

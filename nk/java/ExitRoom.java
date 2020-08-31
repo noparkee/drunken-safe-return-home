@@ -11,19 +11,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-public class EnterRoom extends Service {    // 방에 초대된 후 수락해서 방에 들어갈 때
+public class ExitRoom extends Service {     // 방에서 나갈 때!
+    String tag = "ExitRoom";
+    String roomkey = "1";       // 이거는 합칠 때 방 번호 UI 에서?
     String UserID = "123";
-    String tag = "EnterRoom";
 
-    private FirebaseDatabase db = FirebaseDatabase.getInstance();
-    private DatabaseReference enterroom = db.getReference();
+    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference exit = mDatabase.getReference("users").child(UserID).child("room");
+    private DatabaseReference room = mDatabase.getReference("room");
 
-    public EnterRoom() {
+    public ExitRoom() {
     }
 
     @Override
@@ -40,23 +40,27 @@ public class EnterRoom extends Service {    // 방에 초대된 후 수락해서
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-
-        enterroom.child("room").child("1").child("num").addListenerForSingleValueEvent(new ValueEventListener() {   // 현재 인원 수 읽어오기
+        room.child(roomkey).child("num").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.e(tag, snapshot.getValue().toString());
+                exit.child(roomkey).setValue(null);     // 방에서 나갈 때 유저 정보에서 방 정보 삭제
+
                 String snum = snapshot.getValue().toString();
                 int num = Integer.parseInt(snum);
                 System.out.println(num);
+                room.child(roomkey).child("num").setValue(--num);       // 방 정보에서 num--
+                System.out.println(num);
 
-                enterroom.child("room").child("1").child("mem").push().setValue("789"); // 방에 들어가면 room의 mem에 추가. 여기서 "789"는 다른 사람 id 일단 임의로.
-                enterroom.child("room").child("1").child("num").setValue(++num);
+                // 방 정보의 mem에서 123 유저도 빼야해... 어케하지? 이상한 값을 지워야하는데...
+                // -- 여기 채워야 해 --
 
-                enterroom.child("users").child("789").child("room").child("1").child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-                enterroom.child("users").child("789").child("room").child("1").child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-                // 여기서 "1"은 roomid인데, 링크 누르면 방 아이디가 같이 넘어가야할 듯.
+
+                if (num == 0){
+                    room.child(roomkey).setValue(null);   // 방의 num이 0이 되면 방도 삭제.
+                }
 
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 

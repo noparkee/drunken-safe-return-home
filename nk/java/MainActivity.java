@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Button test;
     private Button set;
     private Button roomdb;
+    private Button exit;
 
     private String date;
     private String loc;
@@ -65,6 +66,15 @@ public class MainActivity extends AppCompatActivity {
         test = findViewById(R.id.test);
         set = findViewById(R.id.set);
         roomdb = findViewById(R.id.roomdb);
+        exit = findViewById(R.id.exit);
+
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent ex = new Intent(getApplicationContext(), ExitRoom.class);
+                startService(ex);
+            }
+        });
 
         set.setOnClickListener(new View.OnClickListener(){
             @Override

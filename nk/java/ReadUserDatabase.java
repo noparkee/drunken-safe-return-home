@@ -57,11 +57,7 @@ public class ReadUserDatabase extends Service {     // user 정보 읽기
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {        // user가 있는 방이 없어졌을 때
-                Log.e("db", "onChildRemoved: " + snapshot.getKey());
 
-                Intent deltedb = new Intent(getApplicationContext(), DeleteDatabase.class);
-                deltedb.putExtra("delroomid", snapshot.getKey());
-                startService(deltedb);
             }
 
             @Override

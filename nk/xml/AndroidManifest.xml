@@ -22,9 +22,25 @@
         android:taskAffinity=""
         android:theme="@style/AppTheme">
         <service
+            android:name=".ExitRoom"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
+            android:name=".MakeRoom"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".EnterRoom"
+            android:enabled="true"
+            android:exported="false" />
+        <service
             android:name=".ReadRoomDatabase"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
+        <service
+            android:name=".ReadRoomid"
+            android:enabled="true"
+            android:exported="false" />
         <service
             android:name=".ReadUserDatabase"
             android:enabled="true"
@@ -35,10 +51,6 @@
             android:enabled="true"
             android:exported="true" />
 
-        <service
-            android:name=".ReadDatabase"
-            android:enabled="true"
-            android:exported="false" />
         <service
             android:name=".SetAlarm"
             android:enabled="true"

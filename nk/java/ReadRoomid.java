@@ -59,12 +59,7 @@ public class ReadRoomid extends Service {     // 유저가 들어 있는 room �
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                Log.e(tag, "onChildRemoved: " + snapshot.getValue().toString());
-                Log.e(tag, "onChildRemoved: " + snapshot.getKey());
 
-                Intent deltedb = new Intent(getApplicationContext(), DeleteDatabase.class);
-                deltedb.putExtra("delroomid", snapshot.getKey());
-                startService(deltedb);
             }
 
             @Override
