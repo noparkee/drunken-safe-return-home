@@ -53,10 +53,11 @@ public class ExitRoom extends Service {     // 방에서 나갈 때!
 
                 // 방 정보의 mem에서 123 유저도 빼야해... 어케하지? 이상한 값을 지워야하는데...
                 // -- 여기 채워야 해 --
-
+                room.child(roomkey).child("mem").child("123").setValue(null);
 
                 if (num == 0){
                     room.child(roomkey).setValue(null);   // 방의 num이 0이 되면 방도 삭제.
+
                 }
 
             }

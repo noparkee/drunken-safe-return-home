@@ -49,12 +49,17 @@ public class EnterRoom extends Service {    // 방에 초대된 후 수락해서
                 int num = Integer.parseInt(snum);
                 System.out.println(num);
 
-                enterroom.child("room").child("1").child("mem").push().setValue("789"); // 방에 들어가면 room의 mem에 추가. 여기서 "789"는 다른 사람 id 일단 임의로.
+                //enterroom.child("room").child("1").child("mem").push().setValue("789"); // 방에 들어가면 room의 mem에 추가. 여기서 "789"는 다른 사람 id 일단 임의로.
+                enterroom.child("room").child("1").child("mem").child("789").child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                enterroom.child("room").child("1").child("mem").child("789").child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 enterroom.child("room").child("1").child("num").setValue(++num);
 
                 enterroom.child("users").child("789").child("room").child("1").child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 enterroom.child("users").child("789").child("room").child("1").child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 // 여기서 "1"은 roomid인데, 링크 누르면 방 아이디가 같이 넘어가야할 듯.
+                // 링크에 방 번호가 있어야해.
+                // 여기서는 789가 입장하는거 실제 코드에선 하나의 userid만 있으면 됨.
+                // 그니까 실제로는 만약 아이디가 kkk라면 enter도, make에서도 디비에 쓰여지느 ㄴuserid는 kkk
 
             }
             @Override

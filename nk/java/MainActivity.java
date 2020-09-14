@@ -16,8 +16,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -75,29 +78,6 @@ public class MainActivity extends AppCompatActivity {
                 startService(ex);
             }
         });
-
-        set.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                date = "2020-08-21 16:00";
-                loc = "Anam";
-            }
-        });
-
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {       // db에 추가! 유저부분에
-
-                databaseReference.child("users").child("123").child("room").child(String.valueOf(roomid)).child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-                databaseReference.child("users").child("123").child("room").child(String.valueOf(roomid)).child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-
-                databaseReference.child("room").child(String.valueOf(roomid)).child("date").setValue(date);
-                databaseReference.child("room").child(String.valueOf(roomid)).child("location").setValue(loc);
-
-                roomid++;
-            }
-        });
-
 
         dbbtn.setOnClickListener(new View.OnClickListener() {
             @Override

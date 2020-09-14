@@ -103,13 +103,15 @@ public class SetAlarm extends Service {
         Log.d(tag, "addAlarm()");
         System.out.println(t.getHour() + "시 "+ t.getMinute() + "분" + t.getYear() + "년" + t.getMonthValue() + "월" + t.getDayOfMonth()+"일");
         System.out.println(t);
+        System.out.println(reqcode);
 
         if (t.isAfter(LocalDateTime.now())) {
             Log.d(tag, "알람 추가하자!");
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             Calendar calendar = Calendar.getInstance();
 
-            Intent intent = new Intent(this, Alarm.class);
+            Intent intent = new Intent(this, AlarmReceiver.class);
+            //Intent intent = new Intent("com.orangeline.foregroundstudy.ALARM_START");
             PendingIntent pIntent = PendingIntent.getBroadcast(this, reqcode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             if (pIntent != null && alarmManager != null) {
                 alarmManager.cancel(pIntent);
@@ -120,11 +122,12 @@ public class SetAlarm extends Service {
             calendar.set(Calendar.DATE, t.getDayOfMonth());
             calendar.set(Calendar.HOUR_OF_DAY, t.getHour());
             calendar.set(Calendar.MINUTE, t.getMinute());
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
 
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+            System.out.println("추가완료");
         }
-
-        stopSelf();
     }
 
     private void delAlarm(int reqcode){     // 알람 삭제
@@ -132,7 +135,8 @@ public class SetAlarm extends Service {
 
         AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(ALARM_SERVICE);
 
-        Intent intent = new Intent(this, Alarm.class);
+        //Intent intent = new Intent("com.orangeline.foregroundstudy.ALARM_START");
+        Intent intent = new Intent(this, AlarmReceiver.class);
         PendingIntent pIntent = PendingIntent.getBroadcast(this, reqcode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (pIntent != null){

@@ -21,10 +21,24 @@
         android:supportsRtl="true"
         android:taskAffinity=""
         android:theme="@style/AppTheme">
+
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.orangeline.foregroundstudy.ALARM_START" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".Alarm"
+            android:enabled="true"
+            android:exported="true" />
         <service
             android:name=".ExitRoom"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
         <service
             android:name=".MakeRoom"
             android:enabled="true"
@@ -46,15 +60,10 @@
             android:enabled="true"
             android:exported="false" />
 
-        <receiver
-            android:name=".Alarm"
-            android:enabled="true"
-            android:exported="true" />
-
         <service
             android:name=".SetAlarm"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="true" />
         <service
             android:name=".MyService"
             android:enabled="true"
