@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Button set;
     private Button roomdb;
     private Button exit;
+    private Button send;
 
     private String date;
     private String loc;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("test","onCreate 실행");
 
-        checkPermission();        // 퍼미션 체크 -> 없으면 허용 하도록 앱 실행할 때 퍼미션 체크
+        checkPermission();        // 퍼미션 체크 -> 없으면 허용 하도록 앱 실행할 때! 퍼미션 체크
 
         enterroom = findViewById(R.id.enterroom);
         dbbtn = findViewById(R.id.db);
@@ -70,8 +71,9 @@ public class MainActivity extends AppCompatActivity {
         set = findViewById(R.id.set);
         roomdb = findViewById(R.id.roomdb);
         exit = findViewById(R.id.exit);
+        send = findViewById(R.id.send);
 
-        exit.setOnClickListener(new View.OnClickListener() {
+        exit.setOnClickListener(new View.OnClickListener() {    // exitroom
             @Override
             public void onClick(View v) {
                 Intent ex = new Intent(getApplicationContext(), ExitRoom.class);
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         dbbtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {   // readuserdb
                 Intent database = new Intent(getApplicationContext(), ReadUserDatabase.class);
                 startService(database);
             }
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         makeroom.setOnClickListener(new View.OnClickListener(){     // 방 만들었을 때의 동작 즉, 방을 처음 만든 사람의 동작
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {   //makeroom
                 Intent intent = new Intent(getApplicationContext(), MakeRoom.class);
                 startService(intent);
             }
@@ -105,11 +107,27 @@ public class MainActivity extends AppCompatActivity {
 
         roomdb.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {   //readroomid
                 Intent intent = new Intent(getApplicationContext(), ReadRoomid.class);
                 startService(intent);
             }
         });
+
+        test.setOnClickListener(new View.OnClickListener() {    // 새로운 유저 추가시
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), AddnewUserDB.class);
+                startService(intent);
+            }
+        });
+
+        send.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                sendSms("01040550786", "유정이 안녕");
+            }
+        });
+
 
     }
 
@@ -136,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         stopService(rr);
     }
 
-    
+
 
     public void startService(){
         Log.d("test", "startService 실행");
@@ -154,20 +172,20 @@ public class MainActivity extends AppCompatActivity {
         //ContextCompat.startForegroundService(this, serviceIntent);
     }
 
-    @Override
+    @Override // 퍼미션 허용 여부값을 return 받는 듯
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {   // checkPermission 함수에서 퍼미션 요청
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == MY_PERMISSIONS_REQUEST_SEND_SMS){        // 퍼미션 ok
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                //sendSms("01040550786", "소병희 님이 도착하지 못했어요! 현재 주소는: ~_~");
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.e("onRequestPermissionResult", "!!!!!!!!!!!!!!!!!!!");
+        if (requestCode == MY_PERMISSIONS_REQUEST_SEND_SMS) {        // 퍼미션 ok
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("sms", "onRequestPermissionsResult() 함수 내부");
+                Toast.makeText(this, "sms 권한을 허용하셨습니다.", Toast.LENGTH_LONG).show();
 
             } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)){       // 퍼미션을 거부한 적이 있다면
-                    Toast.makeText(this, "문자 서비스를 원하시면 sms 권한을 허용해주세요", Toast.LENGTH_LONG).show();
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {       // 퍼미션을 거부한 적이 있다면
+                    Toast.makeText(this, "sms 권한을 거부하셨습니다.", Toast.LENGTH_LONG).show();
                 } else {        // 다시 보지 않기로 거부했다면
-                    Toast.makeText(this, "SMS 권한이 허용되지 않아 보낼 수 없습니다. 설정해서 허용해주세요.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "sms 권한을 거부하셨습니다. 문자 서비스를 이용하시려면 설정에서 sms 권한을 허용해주세요.", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -175,21 +193,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkPermission(){
+        Log.e("checkPermission", "!!!!!!!!!!!!!!!!!!!");
         int permissionCheck = ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS);
 
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED){      // 퍼미션 허용 되어있다면,
-            //Log.d("sms", "sms permission 허용 상태");
-            //Toast.makeText(this, "sms permission 허용 상태", Toast.LENGTH_LONG).show();
-            //별도의 알림은 없음
-        }
-        else {
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED){      // 퍼미션 허용 되어있지 않으면,
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)){       // 퍼미션을 거부한 적이 있다면
-                Toast.makeText(this, "sms permission 거부 상태. addPermission 문자 서비스를 원하시면 sms 권한을 허용해주세요", Toast.LENGTH_LONG).show();
-                /*ActivityCompat.requestPermissions(this,
+                Toast.makeText(this, "문자 서비스를 이용하시려면 sms 권한이 필요합니다. sms 권한을 허용해주세요.", Toast.LENGTH_LONG).show();
+                ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.SEND_SMS},
-                        MY_PERMISSIONS_REQUEST_SEND_SMS);*/
+                        MY_PERMISSIONS_REQUEST_SEND_SMS);
 
             } else {        // 퍼미션 거부한 적이 없다면 퍼미션 요청
+                Toast.makeText(this, "문자 서비스를 이용하시려면 sms 권한이 필요합니다.", Toast.LENGTH_LONG).show();
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.SEND_SMS},
                         MY_PERMISSIONS_REQUEST_SEND_SMS);
@@ -198,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendSms(String num, String msg){
+        Log.e("sendSms", "!!!!!!!!!!!!!!!!!!!");
         int permissionCheck = ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS);
         Log.d("sms", "in sendSms function");
 
@@ -206,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             smsManager.sendTextMessage(num, null, msg, null, null);
         }
         else {
-            Toast.makeText(this, "문자 서비스를 원하시면 설정에서 sms 권한을 허용해주세요", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "sms 권한이 없습니다. 문자 서비스를 이용하시려면 sms 권한이 필요합니다.", Toast.LENGTH_LONG).show();
         }
 
     }
