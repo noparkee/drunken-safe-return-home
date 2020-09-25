@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void test() throws IOException {
-        apiHelper.setAccessToken("c2847b9efc5ffdc52c09e3c0e74574bc");
-        apiHelper.setAdminKey("dc1acaf21e0a20787b24fa6206a3c212");
+        apiHelper.setAccessToken("xxxxxxxxxxxxxxxxxxxxxxx");
+        apiHelper.setAdminKey("xxxxxxxxxxxxxxxxxxxxxxx");
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>test is beginning soon!!!!!!!");
         testLocal();
     }
