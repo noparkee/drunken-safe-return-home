@@ -11,16 +11,17 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
 
-
+///////////////////////////////////////////////////////////////////
+//Kakao REST API 통신에 필요한 기능들을 구현한 프래그먼트
+///////////////////////////////////////////////////////////////////
 public class KakaoRestApiHelper {
 
-    public enum HttpMethodType { POST, GET, DELETE }
+    public enum HttpMethodType { POST, GET, DELETE }	//REST API와 통신방식 변수들 선언 : POST=0, GET=1, DELETE=2 (현재 코드에서는 GET만 사용)
 
-    private static final String API_SERVER_HOST = "https://dapi.kakao.com";
+    private static final String API_SERVER_HOST = "https://dapi.kakao.com";	//Kakao 서버 주소
 
-    private static final String LOCAL_SEARCH_ADDRESS_PATH = "/v2/local/search/address.json?";
+    private static final String LOCAL_SEARCH_ADDRESS_PATH = "/v2/local/search/address.json?";	//Kakao 로컬 REST API 서버 주소 + json 포맷으로 설정
 
     private static final ObjectMapper JACKSON_OBJECT_MAPPER = new ObjectMapper();
 
@@ -31,42 +32,42 @@ public class KakaoRestApiHelper {
     private String accessToken;
     private String adminKey;
 
-    private double longitude, latitude;
+    private double longitude, latitude;	//주소지의 경도와 위도 (MainActivity.java에서는 같은 변수명으로 사용자 경도위도입니다 제성합니다.....나중에...수정할게요
 
-    public void setAccessToken(final String accessToken) {
+    public void setAccessToken(final String accessToken) {	//호출 시 인자로 accessToken을 받아옴
         this.accessToken = accessToken;
     }
 
-    public void setAdminKey(final String adminKey) {
+    public void setAdminKey(final String adminKey) {	//호출 시 인자로 adminKey를 받아옴
         this.adminKey = adminKey;
     }
 
-    ////////////////////////////////////////////////////////////////////
-    // Local
-    ////////////////////////////////////////////////////////////////////
 
-    public String[] searchAddress(final Map<String, String> params) {
-        final String[] address_req = new String[1];
-        String curAddress;
+	///////////////////////////////////////////////////////////////////
+    //REST API 통신 구현
+	///////////////////////////////////////////////////////////////////
+    public String[] searchAddress(final Map<String, String> params) {	//서버에 요청을 보내고 응답을 받는 기능을 구현. 인자로 query string 파라미터를 받음
+        final String[] address_req = new String[1];	//서버 응답을 할당할 변수
+        String curAddress;	//address_req 값을 임시로 할당하여 JsonParser함수에 인자로 넣을 변수
 
         new Thread() {
-            public void run() {
-                address_req[0] = request(HttpMethodType.GET, LOCAL_SEARCH_ADDRESS_PATH, mapToParams(params));
+            public void run() {	//이 내부에 쓴 코드들은 외부의 코드들과 동시에 돌아가기 때문에 아래에서 while문으로 request의 응답이 돌아올 때까지 루프를 돌게 해줌
+                address_req[0] = request(HttpMethodType.GET, LOCAL_SEARCH_ADDRESS_PATH, mapToParams(params));	//line 73 : request함수에 인자로 통신방식, 요청할 URL, 인코딩한 query를 전달	//mapToParams()=line 153
             }
         }.start();
 
-        while (address_req[0] == null) { }
+        while (address_req[0] == null) { }	//루프를 돌며 기다리지 않으면 request 함수가 값을 반환하기 전에, 즉 address_req[0]가 null인 채 코드가 진행되어 버림
 
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>while statements Done");
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>while statements Done");	//루프를 빠져나왔는지 테스트
         try {
             curAddress = address_req[0];
-            address_req[0] = null;
-            return JsonParser(curAddress);  //받아온 응답에서 documents[0]의 정보를 JsonNode 타입으로 추출
+            address_req[0] = null;	//혹시 재검색을 하면 잘 실행되게 해보려고 다시 null로 만들었는데 이거랑은 별개로 두 번부터는 동작하지 않음. 딴짓한거라서 그냥 address_req[0]을 JsonParser에 넘겨도 상관없음.
+            return JsonParser(curAddress);  //line 163 : JsonParser는 [0]=도로명주소, [1]=주소지경도, [2]=주소지위도인 String 타입 배열을 반환
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return null;	//에러가 발생하면 null을 반환
     }
 
     public String request(HttpMethodType httpMethod, final String apiPath, final String params) {
