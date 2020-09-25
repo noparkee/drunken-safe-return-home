@@ -4,6 +4,7 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
     public LocalDateTime []arrTimes;
     public LocalDateTime []depTimes;
     public String [] names;
+    public int[] states;
 
     private int[] images = {R.drawable.image1, R.drawable.image2, R.drawable.image3, R.drawable.image4};
 
@@ -42,22 +44,27 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
         arrTimes = new LocalDateTime[numOfPeople];
         depTimes = new LocalDateTime[numOfPeople];
         names = new String[numOfPeople];
+        states = new int[numOfPeople]; // 귀가 전 = 1, 귀가 중 = 2, 귀가 완료 = 3 세 가지 상태
 
-        arrTimes[0] = LocalDateTime.parse("2020-09-01T21:00:00");
-        arrTimes[1] = LocalDateTime.parse("2020-09-01T22:00:00");
-        arrTimes[2] = LocalDateTime.parse("2020-09-01T22:00:00");
-        arrTimes[3] = LocalDateTime.parse("2020-09-01T22:00:00");
+        depTimes[0] = LocalDateTime.parse("2020-09-01T21:00:00");
+        depTimes[1] = LocalDateTime.parse("2020-09-01T22:00:00");
+        depTimes[2] = LocalDateTime.parse("2020-09-01T22:00:00");
+        depTimes[3] = LocalDateTime.parse("2020-09-01T22:00:00");
 
-        depTimes[0] = LocalDateTime.parse("2020-09-01T22:30:00");
-        depTimes[1] = LocalDateTime.parse("2020-09-01T22:30:00");
-        depTimes[2] = LocalDateTime.parse("2020-09-01T23:00:00");
-        depTimes[3] = LocalDateTime.parse("2020-09-01T23:30:00");
+        arrTimes[0] = LocalDateTime.parse("2020-09-01T22:30:00");
+        arrTimes[1] = LocalDateTime.parse("2020-09-01T22:30:00");
+        arrTimes[2] = LocalDateTime.parse("2020-09-01T23:00:00");
+        arrTimes[3] = LocalDateTime.parse("2020-09-01T23:30:00");
 
         names[0] = "박노경";
         names[1] = "이유빈";
         names[2] = "임채원";
         names[3] = "소병희";
 
+        states[0] = 1;
+        states[1] = 1;
+        states[2] = 2;
+        states[3] = 3;
 
     }
 
@@ -66,11 +73,13 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
         public ImageView profileImage;
         public TextView name;
         public TextView detail;
+        public Button state;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImage = (ImageView)itemView.findViewById(R.id.imageView2);
             name = (TextView)itemView.findViewById(R.id.name);
             detail = (TextView)itemView.findViewById(R.id.detail);
+            state = (Button)itemView.findViewById(R.id.State);
         }
     }
     @NonNull
@@ -81,11 +90,23 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
         return viewHolder;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull RoomActivity2_RecyclerAdapter.ViewHolder holder, int position) {
         holder.name.setText(names[position]);
-        holder.detail.setText(depTimes[position].toString() + " >> " + arrTimes[position].toString());
+       /* appTimes[i].getMonthValue() + "월 "+
+                appTimes[i].getDayOfMonth() + "일 " + appTimes[i].getHour() + "시 " + appTimes[i].getMinute() + "분 ";*/
+       holder.detail.setText(depTimes[position].getHour() + "시 " +
+               depTimes[position].getMinute() +"분 >> " + arrTimes[position].getHour()
+        + "시 " + arrTimes[position].getMinute() + "분");
+        //holder.detail.setText(depTimes[position].toString() + " >> " + arrTimes[position].toString());
         holder.profileImage.setImageResource(images[position]);
+        switch(states[position]){
+            case 1: holder.state.setText("귀가 전"); break;
+            case 2: holder.state.setText("귀가 중"); break;
+            case 3: holder.state.setText("귀가 완료"); break;
+        }
+        //holder.state.setText("귀가 중");
     }
 
     @Override
