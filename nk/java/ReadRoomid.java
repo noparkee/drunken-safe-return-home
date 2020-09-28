@@ -14,12 +14,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class ReadRoomid extends Service {     // 유저가 들어 있는 room 정보 읽기
+public class ReadRoomid extends Service {
     String tag = "ReadRoomid";
-    String UserID = "123";
-    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference roomidref = mDatabase.getReference("users").child(UserID).child("room");
-    static String room;
+
     public ReadRoomid() {
     }
 
@@ -34,16 +31,28 @@ public class ReadRoomid extends Service {     // 유저가 들어 있는 room �
         super.onCreate();
 
         Log.d(tag, "in onCreate()");
-        roomidref.addChildEventListener(new ChildEventListener() {
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String UserID = intent.getStringExtra("UserID");
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+        // 유저가 들어 있는 room 정보 읽기
+        DatabaseReference userroomidref = mDatabase.getReference("users").child(UserID).child("room");
+        // 전체 방 정보
+        DatabaseReference roomidref = mDatabase.getReference("room");
+
+        userroomidref.addChildEventListener(new ChildEventListener() {      // 유저가 현재 들어가 있는 방에 대해서 하나 씩
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Log.e(tag, "onChildAdded: " + snapshot.getValue().toString());
                 Log.e(tag, "onChildAdded: " + snapshot.getKey());
 
-                // 새로 생성된 방의 id를 ReadRoomDatabase로 넘김
-                Intent readroomdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
+                // 새로 생성된 방의 id를 ReadRoomDatabase로 넘김 - makeroom에서 방 추가 되면 이게 추가되니까.
+                /*Intent readroomdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
                 readroomdb.putExtra("roomid", snapshot.getKey());
-                startService(readroomdb);
+                startService(readroomdb);*/
             }
 
             @Override
@@ -52,9 +61,9 @@ public class ReadRoomid extends Service {     // 유저가 들어 있는 room �
                 Log.e(tag, "onChildChanged: " + snapshot.getKey());
 
                 // 변경이 있는 방의 id를 ReadRoomDatabase로 넘김
-                Intent readroomdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
+                /*Intent readroomdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
                 readroomdb.putExtra("roomid", snapshot.getKey());
-                startService(readroomdb);
+                startService(readroomdb);*/
             }
 
             @Override
@@ -72,11 +81,39 @@ public class ReadRoomid extends Service {     // 유저가 들어 있는 room �
 
             }
         });
-    }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+
+
+        roomidref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Intent statechange = new Intent(getApplicationContext(), StateChange.class);
+                statechange.putExtra("roomid", snapshot.getKey());
+                startService(statechange);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        return START_STICKY;
     }
 
     @Override

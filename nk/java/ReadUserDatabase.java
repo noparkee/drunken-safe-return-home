@@ -18,10 +18,8 @@ import java.util.ArrayList;
 
 public class ReadUserDatabase extends Service {     // user 정보 읽기
     String tag = "ReadUserDataBase";
-    String UserID ="123";
 
-    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();            /* 유저가 있는 방이 생기고, 없어질 때마다 알람 추가 및 삭제하도록 setalarm 서비스로 연결*/
-    private DatabaseReference userref = mDatabase.getReference("users").child(UserID).child("room");
+    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();            /* 유저가 있는 방이 생기고, 없어질 때마다 */
 
     public ReadUserDatabase() {
     }
@@ -36,23 +34,59 @@ public class ReadUserDatabase extends Service {     // user 정보 읽기
     public void onCreate() {
         super.onCreate();
         Log.d(tag, "in onCreate()");
-        userref.addChildEventListener(new ChildEventListener() {
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String UserID = intent.getStringExtra("UserID");
+        DatabaseReference userref = mDatabase.getReference("users").child(UserID);// 유저 정보
+
+        userref.addChildEventListener(new ChildEventListener() {        // 개인 정보를 변경했을 때
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        //private DatabaseReference userroomref = mDatabase.getReference("users").child(UserID).child("room");
+        /*userroomref.addChildEventListener(new ChildEventListener() {    // 방이 추가되거나 삭제 될 때
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {      // user가 있는 방이 추가 됐을 때
                 Log.e("db", "onChildAdded: " + snapshot.getKey());
 
-                Intent setalarmservice = new Intent(getApplicationContext(), SetAlarm.class);
-                setalarmservice.putExtra("addkey", snapshot.getKey());
-                startService(setalarmservice);
+                //Intent setalarmservice = new Intent(getApplicationContext(), SetAlarm.class);
+                //setalarmservice.putExtra("addkey", snapshot.getKey());
+                //startService(setalarmservice);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {        // 사용자가 집 가는 시간이 변경 됐을 때
                 Log.e("db", "onChildChanged: " + snapshot.getKey());
 
-                Intent setalarmservice = new Intent(getApplicationContext(), SetAlarm.class);
-                setalarmservice.putExtra("addkey", snapshot.getKey());
-                startService(setalarmservice);
+                //Intent setalarmservice = new Intent(getApplicationContext(), SetAlarm.class);
+                //setalarmservice.putExtra("addkey", snapshot.getKey());
+                //startService(setalarmservice);
             }
 
             @Override
@@ -70,12 +104,7 @@ public class ReadUserDatabase extends Service {     // user 정보 읽기
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
+        });*/
 
         return START_STICKY;
     }

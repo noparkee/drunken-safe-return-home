@@ -16,9 +16,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MakeRoom extends Service {     // 방을 만들어서 방을 처음 만든 사람은 방에 들어가있는 상태일 때
-    String UserID = "123";
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference roomkey = mDatabase.getReference("key");
+    private DatabaseReference roomkey = mDatabase.getReference("key");  // key는 지금까지 방 몇 개 만들어져있는지
 
     public MakeRoom() {
     }
@@ -36,6 +35,8 @@ public class MakeRoom extends Service {     // 방을 만들어서 방을 처음
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        final String UserID = intent.getStringExtra("UserID");
+        System.out.println(UserID);
         roomkey.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -50,6 +51,12 @@ public class MakeRoom extends Service {     // 방을 만들어서 방을 처음
                 makeroom.child("room").child(key).child("mem").child("123").child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 makeroom.child("room").child(key).child("mem").child("123").child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 makeroom.child("room").child(key).child("num").setValue(1);     // 방을 만들 때는 인원 1
+
+                makeroom.child("room").child(key).child("arrtime").child(UserID).setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                makeroom.child("room").child(key).child("deptime").child(UserID).setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+
+                makeroom.child("room").child(key).child("state").child(UserID).setValue(-1);
+                // -1: 미출발, 0: 미도착, 1도착
 
                 makeroom.child("users").child("123").child("room").child(key).child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 makeroom.child("users").child("123").child("room").child(key).child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
