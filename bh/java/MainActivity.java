@@ -14,6 +14,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+enum userState {
+    NOTDEPART,
+    DEPART,
+    ARRIVE,
+    NOTARRIVE
+}
+
 public class MainActivity extends AppCompatActivity {
 
     private static KakaoRestApiHelper apiHelper = new KakaoRestApiHelper();
@@ -21,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private double distance;
     private double latitude;
     private double longitude;
-    private boolean isHome;
+    private userState state;
+    //private int isHome;
     private String inputHome;
 
     @SuppressLint("SetTextI18n")
@@ -104,13 +112,13 @@ public class MainActivity extends AppCompatActivity {
         TextView howFar = findViewById(R.id.howFar);
         howFar.setText("임채원 님의 현재위치에서 귀가지까지의 거리는\n " + distance + " km입니다.");
 
-        isHome = distance > 0.3 ? false : true;
+        state = distance > 0.3 ? userState.DEPART : userState.ARRIVE;
 
-        TextView userState = findViewById(R.id.userState);
+        TextView stateText = findViewById(R.id.stateText);
 
-        if (isHome)
-            userState.setText("임채원 님은 현재 귀가 상태입니다.\n안녕히 주무세요!");
+        if (state == userState.ARRIVE)
+            stateText.setText("임채원 님은 현재 귀가 상태입니다.\n안녕히 주무세요!");
         else
-            userState.setText("임채원 님은 현재 미귀가 상태입니다.\n얼른 집에 가세요-_-;");
+            stateText.setText("임채원 님은 현재 미귀가 상태입니다.\n얼른 집에 가세요-_-;");
     }
 }
