@@ -64,6 +64,7 @@ public class EnterRoom extends Service {    // 방에 초대된 후 수락해서
 
                 enterroom.child("users").child(UserID).child("room").child("1").child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 enterroom.child("users").child(UserID).child("room").child("1").child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                enterroom.child("users").child("123").child("room").child("1").child("roominfostate").setValue(0);
                 // 여기서 "1"은 roomid인데, 링크 누르면 방 아이디가 같이 넘어가야할 듯.
                 // 링크에 방 번호가 있어야해.
                 // 여기서는 789가 입장하는거 실제 코드에선 하나의 userid만 있으면 됨.

@@ -75,13 +75,14 @@ public class StateChange extends Service {
                 String stateuser = snapshot.getValue().toString();
                 int intstateuser = Integer.parseInt(stateuser);
                 String usernickname = snapshot.getKey(); // -> 이거를 지금은 카카오 아이디인데, 이거를 닉네임으로 바꿔야해ㅠ
-
-
-                System.out.println(stateuser);
-                System.out.println(usernickname);
-                if (usernickname.equals(UserID)) {
-                    builder.setContentText(usernickname + "님이 집 도착을 하지 못했어요");
-                    notificationManager.notify(intstateuser, builder.build());
+                // 0: 미출발 1: 출발 2: 도착 3: 미도착
+                if (intstateuser == 3) {
+                    System.out.println(stateuser);
+                    System.out.println(usernickname);
+                    if (usernickname.equals(UserID)) {
+                        builder.setContentText(usernickname + "님이 집 도착을 하지 못했어요");
+                        notificationManager.notify(intstateuser, builder.build());
+                    }
                 }
             }
 

@@ -56,10 +56,11 @@ public class MakeRoom extends Service {     // 방을 만들어서 방을 처음
                 makeroom.child("room").child(key).child("deptime").child(UserID).setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
 
                 makeroom.child("room").child(key).child("state").child(UserID).setValue(-1);
-                // -1: 미출발, 0: 미도착, 1도착
+
 
                 makeroom.child("users").child("123").child("room").child(key).child("arrtime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 makeroom.child("users").child("123").child("room").child(key).child("deptime").setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                makeroom.child("users").child("123").child("room").child(key).child("roominfostate").setValue(0);
                 // "123" 이거는 카카오 get id 하면 될거 같음.
                 roomkey.setValue(++numkey);
             }

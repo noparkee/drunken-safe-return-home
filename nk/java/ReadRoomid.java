@@ -14,6 +14,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+
 public class ReadRoomid extends Service {
     String tag = "ReadRoomid";
 
@@ -49,10 +51,14 @@ public class ReadRoomid extends Service {
                 Log.e(tag, "onChildAdded: " + snapshot.getValue().toString());
                 Log.e(tag, "onChildAdded: " + snapshot.getKey());
 
+                /*HashMap<String, String> map;
+                map = (HashMap<String, String>) snapshot.getValue();
+                System.out.println(map.get("deptime"));*/
+
                 // 새로 생성된 방의 id를 ReadRoomDatabase로 넘김 - makeroom에서 방 추가 되면 이게 추가되니까.
-                /*Intent readroomdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
+                Intent readroomdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
                 readroomdb.putExtra("roomid", snapshot.getKey());
-                startService(readroomdb);*/
+                startService(readroomdb);
             }
 
             @Override
@@ -61,9 +67,9 @@ public class ReadRoomid extends Service {
                 Log.e(tag, "onChildChanged: " + snapshot.getKey());
 
                 // 변경이 있는 방의 id를 ReadRoomDatabase로 넘김
-                /*Intent readroomdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
+                Intent readroomdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
                 readroomdb.putExtra("roomid", snapshot.getKey());
-                startService(readroomdb);*/
+                startService(readroomdb);
             }
 
             @Override
@@ -84,7 +90,7 @@ public class ReadRoomid extends Service {
 
 
 
-        roomidref.addChildEventListener(new ChildEventListener() {
+        /*roomidref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
@@ -111,15 +117,15 @@ public class ReadRoomid extends Service {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        });*/
 
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Intent rrdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
-        stopService(rrdb);
+        //Intent rrdb = new Intent(getApplicationContext(), ReadRoomDatabase.class);
+        //stopService(rrdb);
         super.onDestroy();
     }
 }
