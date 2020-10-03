@@ -20,9 +20,9 @@ import java.time.LocalDateTime;
 
 public class RoomActivity2 extends AppCompatActivity {
 
-    public int RoomId;
+    public int roomId;
     public String userId;
-
+    public String roomName;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     RecyclerView.Adapter adapter;
@@ -32,14 +32,17 @@ public class RoomActivity2 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent it = getIntent();
-        RoomId = it.getIntExtra("roomId", 1);
+        roomId = it.getIntExtra("roomId", 1);
         userId = it.getStringExtra("userId");
-        Log.d("roomId", String.valueOf(RoomId));
+        roomName = it.getStringExtra("roomName");
+        Log.d("roomId", String.valueOf(roomId));
         Log.d("userId", userId);
         setContentView(R.layout.activity_room2);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
+        getSupportActionBar().setTitle(roomName);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         layoutManager =  new LinearLayoutManager(this);
         recyclerView =(RecyclerView) findViewById(R.id.recycler_view);
         layoutManager =  new LinearLayoutManager(this);
@@ -47,14 +50,8 @@ public class RoomActivity2 extends AppCompatActivity {
 
         adapter = new RoomActivity2_RecyclerAdapter();
         ((RoomActivity2_RecyclerAdapter) adapter).UserId = userId;
-        ((RoomActivity2_RecyclerAdapter) adapter).callThisRoomInfo(RoomId, userId);
+        ((RoomActivity2_RecyclerAdapter) adapter).activity = this;
+        ((RoomActivity2_RecyclerAdapter) adapter).callThisRoomInfo(roomId, userId);
         recyclerView.setAdapter(adapter);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 }
