@@ -81,7 +81,8 @@ public class RoomActivity_RecyclerAdapter extends RecyclerView.Adapter<RoomActiv
                     Intent intent = new Intent(itemView.getContext(), RoomActivity2.class);
                     intent.putExtra("userId", userId);
                     intent.putExtra("roomId", RoomId);
-                    //intent.putExtra("roomId", );
+                    intent.putExtra("roomName", RoomName.getText().toString());
+                    //intent.putExtra("roomId", RoomActivity2.class);
                     itemView.getContext().startActivity(intent);
                 }
                 });

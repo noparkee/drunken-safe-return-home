@@ -33,6 +33,7 @@ public class RoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_room);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("개집찾");
 
         layoutManager =  new LinearLayoutManager(this);
         recyclerView =(RecyclerView) findViewById(R.id.recycler_view);

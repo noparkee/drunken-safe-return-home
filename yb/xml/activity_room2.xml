@@ -6,10 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".RoomActivity2">
 
+    <TextView
+        android:id="@+id/roomName"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="100dp"
+        android:text="TextView"
+        android:textSize="30dp" />
+
+    <TextView
+        android:id="@+id/appTime"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="150dp"
+        android:text="TextView"
+        android:textSize="18sp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="500dp"
+        android:layout_marginTop = "150dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
     </androidx.recyclerview.widget.RecyclerView>
@@ -30,12 +49,5 @@
 
     <include layout="@layout/content_room2" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
