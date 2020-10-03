@@ -17,11 +17,8 @@ import com.google.firebase.database.ValueEventListener;
 public class ExitRoom extends Service {     // 방에서 나갈 때!
     String tag = "ExitRoom";
     String roomkey = "1";       // 이거는 합칠 때 방 번호 UI 에서?
-    String UserID = "123";
 
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference exit = mDatabase.getReference("users").child(UserID).child("room");
-    private DatabaseReference room = mDatabase.getReference("room");
 
     public ExitRoom() {
     }
@@ -39,6 +36,10 @@ public class ExitRoom extends Service {     // 방에서 나갈 때!
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        final String UserID = intent.getStringExtra("UserID");
+        System.out.println(UserID);
+        final DatabaseReference exit = mDatabase.getReference("users").child(UserID).child("room");
+        final DatabaseReference room = mDatabase.getReference("room");
 
         room.child(roomkey).child("num").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

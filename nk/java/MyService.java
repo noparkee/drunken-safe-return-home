@@ -13,17 +13,11 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
-public class MyService extends Service {
+public class MyService extends Service {        // 기본 개인 세팅?
     private static final String CHANNEL_ID = "ForegroundServiceChannel";
 
-    NotificationChannel channel;
-    NotificationManager notificationManager;
-    NotificationCompat.Builder builder;
     int a = 2;
     Notification notification;
-
-    PendingIntent fullScreenPendingIntent;
-    Intent fullScreenIntent;
 
     //Toast toast;
 
@@ -41,7 +35,7 @@ public class MyService extends Service {
 
         // 채널 생성
         createNotificationChannel();    // 여기까지는 채널 생성
-        createHeadsUpNotificationChannel();     // heads up 채널 생성
+
 
         // 포그라운드 알림 설정 //
         Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -54,17 +48,7 @@ public class MyService extends Service {
                 //.setPriority(Notification.PRIORITY_MAX)
                 .build();
 
-        // heads up 알림 설정 //
-        fullScreenIntent = new Intent(this, MyService.class);       // MainActivity로 하면 무한 실행됨.
-        fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, 0);
-        builder = new NotificationCompat.Builder(this, "HeadsUpNotificationChannel")
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("술기로운 귀가생활")
-                .setContentText("집 도착을 하지 못했어요")
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setFullScreenIntent(fullScreenPendingIntent, true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
 
         // 토스트 알림 위한 기본 구성
         /*Context context = getApplicationContext();
@@ -125,19 +109,6 @@ public class MyService extends Service {
 
             NotificationManager manager = (NotificationManager) getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
-        }
-    }
-
-    private void createHeadsUpNotificationChannel() {   // 헤드업 알림 채널 만들기
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channel = new NotificationChannel("HeadsUpNotificationChannel",
-                    "HeadsUp Notification Channel",
-                    NotificationManager.IMPORTANCE_HIGH);
-            Log.d("service", "in createHeadsUpNotificationChannel()");
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
         }
     }
 

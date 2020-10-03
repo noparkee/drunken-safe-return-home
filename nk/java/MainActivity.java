@@ -26,7 +26,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MainActivity extends AppCompatActivity {
+    /*
+    * 지금은 UserID를 MainActivity에서 정의해서 intent로 넘겨주는데,
+    * 이거 합칠 때는 채원이가 카카오 정보 받아오는 곳에서 string으로 저장한 다음에
+    * 거기서 intent로 서비스들 호출 하는 곳으로 불러야해!
+    * */
     String UserID = "123";
+
     private Button enterroom;
     private Button dbbtn;
     private Button makeroom;
@@ -77,41 +83,42 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent ex = new Intent(getApplicationContext(), ExitRoom.class);
+                ex.putExtra("UserID", UserID);
                 startService(ex);
             }
         });
 
-        dbbtn.setOnClickListener(new View.OnClickListener() {
+        /*dbbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {   // readuserdb
-                Intent database = new Intent(getApplicationContext(), ReadUserDatabase.class);
-                startService(database);
+
             }
-        });
+        });*/
 
         makeroom.setOnClickListener(new View.OnClickListener(){     // 방 만들었을 때의 동작 즉, 방을 처음 만든 사람의 동작
             @Override
             public void onClick(View v) {   //makeroom
                 Intent intent = new Intent(getApplicationContext(), MakeRoom.class);
+                intent.putExtra("UserID", UserID);
                 startService(intent);
             }
         });
 
-        enterroom.setOnClickListener(new View.OnClickListener() {
+        enterroom.setOnClickListener(new View.OnClickListener() {   // 입장 버튼 -> 동적링크 눌렀을 떄!
             @Override
             public void onClick(View v) {         // 방에 들어갔을 때의 동작
                 Intent intent = new Intent(getApplicationContext(), EnterRoom.class);
+                intent.putExtra("UserID", UserID);
                 startService(intent);
             }
         });
 
-        roomdb.setOnClickListener(new View.OnClickListener() {
+        /*roomdb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {   //readroomid
-                Intent intent = new Intent(getApplicationContext(), ReadRoomid.class);
-                startService(intent);
+
             }
-        });
+        });*/
 
         test.setOnClickListener(new View.OnClickListener() {    // 새로운 유저 추가시
             @Override
@@ -124,10 +131,18 @@ public class MainActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                sendSms("01040550786", "유정이 안녕");
+                sendSms("010********", "유정이 안녕");
             }
         });
 
+
+        Intent readroomid = new Intent(getApplicationContext(), ReadRoomid.class);
+        readroomid.putExtra("UserID", UserID);
+        startService(readroomid);       // 시작 readroomid
+
+        Intent userdatabase = new Intent(getApplicationContext(), ReadUserDatabase.class);
+        userdatabase.putExtra("UserID", UserID);
+        startService(userdatabase);     // 시작 readuserdb
 
     }
 
