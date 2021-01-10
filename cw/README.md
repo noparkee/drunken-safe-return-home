@@ -30,9 +30,9 @@
 *HomeActivity.java  
 > > activity_info.xml:  
 *InfoActivity.java  
-> > activity_login.xml: 
+> > activity_login.xml:   
 *아직 코드 작성 X  
-> > activity_main.xml:
+> > activity_main.xml:  
 *MainActivity.java  
 
 # 2021.01.17
