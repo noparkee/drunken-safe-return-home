@@ -1,6 +1,7 @@
 ### MainActivity.java   
 - 테스트 위한 메인 화면   
 - 시작하면 startService() 함수 실행 -> MyService.class 실행   
+- ReadRoomid.java와 ReadUserDatabase.java 자동 실행
 
 1) exit -> ExitRoom.class 실행
 2) dbbtn -> PermissionCheckActivity.class 실행 
