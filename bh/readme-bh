@@ -1,0 +1,14 @@
+KakaoRestApiHelper.java
+    카카오의 로컬API를 사용하기 위한 코드.
+    searchAddress()에서 입력한 주소에 대한 도로명주소([0]), 주소지경도([1]), 주소지위도([2])인 String 타입의 배열을 반환.
+    단, 사용자쿼리를 인코딩하는 작업은 MainActivity.java의 testLocal()에서 수행하고 있음.
+  
+MainActivity.java
+    GPS정보(from GPSActivity.java //이 기능을 실시간으로 실행하기 위해 StateService.java에 다시 구현하는 중), 
+    주소입력(from 사용자입력 //추후 사용자DB에서 가져오는 것으로 수정해야 함), 
+    주소정보(from KakaoRestApiHelper->searchAddress())를 가져오고 
+    두 위치 사이의 거리와 사용자 귀가 여부를 계산하는 코드.
+
+GPSActivity.java //이 파일은 삭제할 예정
+    GPS정보를 가져오기 위한 퍼미션확인 (노경이 퍼미션확인 코드로 합쳤음),
+    GPS정보를 인텐트로 MainActivity.java에 넘겨주는 기능 (실시간으로 구현하기 위해 StateService.java로 기능을 넘기고 있음)
