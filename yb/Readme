@@ -1,0 +1,25 @@
+RoomActivity.java 
+	처음 어플을 켰을 때 보이는 화면. 
+	전 화면에서 UserID를 Intent를 통해 불러옴.
+	유저가 속한 방들의 정보를 불러오고 방 리스트들을 cardview 형태로 띄우기 위해 RoomActivity_RecyclerAdapter 객체를 만든다.
+	아마 fab버튼은 안 쓰는 버튼인데 안 지운 거 같당.
+
+RoomActivity_RecyclerAdapter.java : 
+	callRoomInfo() : 
+		DB로부터 유저가 속해있는 방들의 정보를 불러와서 roomNumber, appTimes[], roomNames[], roomIds[]에 저장한다.
+		appTimes는 LocalDateTime 형식이므로, 약속 시간을 UI에 띄우기 위해 appTimeString[] 배열에 n년 n월 n일 n시 n분 형태로 저장한다.
+		저장만 하면 아래 함수들에서 알아서 UI에 연결해줌. 이 함수 말고는 수정해야될 함수 없을듯.
+
+	ViewHolder.onClick() :
+		카드뷰를 클릭했을 때 RoomActivity2를 불러오고, Intent로 userId, roomId, roomName을 넘긴다. 수정 불필요
+
+	
+RoomActivity2.java :
+	이전에 클릭한 방의 정보와 방에 속해 있는 유저들의 정보를 cardview 형태로 띄우기 위해 RoomActivity2_RecyclerAdapter 객체를 만든다.
+
+RoomActivity2_RecyclerAdapter.java :
+	 isFirstAccess(), checkFirst : 아직 미구현
+
+	callThisRoomInfo(int roomId, Sring thisUserId) :
+		RoomActivity_RecyclerAdapter.java에서 넘겨받은 roomId와 thisuserId를 통해 DB에서 방 정보를 불러온다.
+		불러온 정보들을 numOfPeople, arrTimes, depTimes, names, states에 저장한다. 이  말고는 수정 안 해도 됨!
