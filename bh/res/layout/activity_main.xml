@@ -58,6 +58,14 @@
             android:gravity="center" />
 
         <TextView
+            android:id="@+id/GPSinfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:gravity="center" />
+
+        <TextView
             android:id="@+id/howFar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,6 +80,12 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:gravity="center" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="출발할 때 누르세요!" />
 
     </LinearLayout>
 

@@ -12,16 +12,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-///////////////////////////////////////////////////////////////////
-//Kakao REST API 통신에 필요한 기능들을 구현한 프래그먼트
-///////////////////////////////////////////////////////////////////
 public class KakaoRestApiHelper {
 
-    public enum HttpMethodType { POST, GET, DELETE }	//REST API와 통신방식 변수들 선언 : POST=0, GET=1, DELETE=2 (현재 코드에서는 GET만 사용)
+    public enum HttpMethodType { POST, GET, DELETE }
 
-    private static final String API_SERVER_HOST = "https://dapi.kakao.com";	//Kakao 서버 주소
+    private static final String API_SERVER_HOST = "https://dapi.kakao.com";
 
-    private static final String LOCAL_SEARCH_ADDRESS_PATH = "/v2/local/search/address.json?";	//Kakao 로컬 REST API 서버 주소 + json 포맷으로 설정
+    private static final String LOCAL_SEARCH_ADDRESS_PATH = "/v2/local/search/address.json?";
 
     private static final ObjectMapper JACKSON_OBJECT_MAPPER = new ObjectMapper();
 
@@ -32,42 +29,42 @@ public class KakaoRestApiHelper {
     private String accessToken;
     private String adminKey;
 
-    private double longitude, latitude;	//주소지의 경도와 위도 (MainActivity.java에서는 같은 변수명으로 사용자 경도위도입니다 제성합니다.....나중에...수정할게요
+    private double longitude, latitude;
 
-    public void setAccessToken(final String accessToken) {	//호출 시 인자로 accessToken을 받아옴
+    public void setAccessToken(final String accessToken) {
         this.accessToken = accessToken;
     }
 
-    public void setAdminKey(final String adminKey) {	//호출 시 인자로 adminKey를 받아옴
+    public void setAdminKey(final String adminKey) {
         this.adminKey = adminKey;
     }
 
+    ////////////////////////////////////////////////////////////////////
+    // Local
+    ////////////////////////////////////////////////////////////////////
 
-	///////////////////////////////////////////////////////////////////
-    //REST API 통신 구현
-	///////////////////////////////////////////////////////////////////
-    public String[] searchAddress(final Map<String, String> params) {	//서버에 요청을 보내고 응답을 받는 기능을 구현. 인자로 query string 파라미터를 받음
-        final String[] address_req = new String[1];	//서버 응답을 할당할 변수
-        String curAddress;	//address_req 값을 임시로 할당하여 JsonParser함수에 인자로 넣을 변수
+    public String[] searchAddress(final Map<String, String> params) {
+        final String[] address_req = new String[1];
+        String curAddress;
 
         new Thread() {
-            public void run() {	//이 내부에 쓴 코드들은 외부의 코드들과 동시에 돌아가기 때문에 아래에서 while문으로 request의 응답이 돌아올 때까지 루프를 돌게 해줌
-                address_req[0] = request(HttpMethodType.GET, LOCAL_SEARCH_ADDRESS_PATH, mapToParams(params));	//line 73 : request함수에 인자로 통신방식, 요청할 URL, 인코딩한 query를 전달	//mapToParams()=line 153
+            public void run() {
+                address_req[0] = request(HttpMethodType.GET, LOCAL_SEARCH_ADDRESS_PATH, mapToParams(params));
             }
         }.start();
 
-        while (address_req[0] == null) { }	//루프를 돌며 기다리지 않으면 request 함수가 값을 반환하기 전에, 즉 address_req[0]가 null인 채 코드가 진행되어 버림
+        while (address_req[0] == null) { }
 
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>while statements Done");	//루프를 빠져나왔는지 테스트
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>while statements Done");
         try {
             curAddress = address_req[0];
-            address_req[0] = null;	//혹시 재검색을 하면 잘 실행되게 해보려고 다시 null로 만들었는데 이거랑은 별개로 두 번부터는 동작하지 않음. 딴짓한거라서 그냥 address_req[0]을 JsonParser에 넘겨도 상관없음.
-            return JsonParser(curAddress);  //line 163 : JsonParser는 [0]=도로명주소, [1]=주소지경도, [2]=주소지위도인 String 타입 배열을 반환
+            address_req[0] = null;
+            return JsonParser(curAddress);  //받아온 응답에서 documents[0]의 정보를 JsonNode 타입으로 추출
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return null;	//에러가 발생하면 null을 반환
+        return null;
     }
 
     public String request(HttpMethodType httpMethod, final String apiPath, final String params) {
@@ -78,8 +75,8 @@ public class KakaoRestApiHelper {
         if (params != null && params.length() > 0
                 && (httpMethod == HttpMethodType.GET || httpMethod == HttpMethodType.DELETE)) {
             requestURL += params;   //서버에 요청할 url에 인코딩한 검색어값을 추가한다.
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>params는 " + params);
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>최종 URL 주소는" + requestURL);
+            //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>params는 " + params);
+            //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>최종 URL 주소는" + requestURL);
         }
 
         ///////////////////////////HTTP통신(88-141)
@@ -161,7 +158,7 @@ public class KakaoRestApiHelper {
     }
 
     public String[] JsonParser(String resultString) throws IOException {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>json파싱할 문자열은 " + resultString);    //input은 잘 넘어옴(0921)
+        //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>json파싱할 문자열은 " + resultString);    //input은 잘 넘어옴(0921)
 
         ObjectMapper objectMapper = new ObjectMapper();
         String addressJson = resultString;
@@ -188,9 +185,9 @@ public class KakaoRestApiHelper {
         JsonNode yNode = docNode.get("y");
         addressInfo[2] = yNode.asText();                  //y: 사용자의 입력과 일치하는 주소지의 y좌표, 위도(latitude)
 
-        System.out.println("당신의 귀가지는 " + addressInfo[0] + "입니다.");
-        System.out.println("귀가지의 위치정보는 다음과 같습니다.\nx(longitude): " + addressInfo[1] + ",\ny(latitude): " + addressInfo[2]);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>파싱이 끝났습니다. jsonParser 함수를 종료합니다.");
+        //System.out.println("당신의 귀가지는 " + addressInfo[0] + "입니다.");
+        //System.out.println("귀가지의 위치정보는 다음과 같습니다.\nx(longitude): " + addressInfo[1] + ",\ny(latitude): " + addressInfo[2]);
+        //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>파싱이 끝났습니다. jsonParser 함수를 종료합니다.");
 
         return addressInfo;
     }
