@@ -29,8 +29,8 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class GPSActivity extends AppCompatActivity {
-    private static final String TAG = GPSActivity.class.getSimpleName();
+public class PermitActivity extends AppCompatActivity { //check the required permission and call intent to MainActivity
+    private static final String TAG = PermitActivity.class.getSimpleName();
     private static final int GPS_UTIL_LOCATION_PERMISSION_REQUEST_CODE = 100;
     private static final int GPS_UTIL_LOCATION_RESOLUTION_REQUEST_CODE = 101;
 
@@ -68,7 +68,7 @@ public class GPSActivity extends AppCompatActivity {
         if (requestCode == GPS_UTIL_LOCATION_PERMISSION_REQUEST_CODE) {
             for (int i = 0; i < permissions.length; i++) {
                 if (Manifest.permission.ACCESS_FINE_LOCATION.equals(permissions[i])) {
-                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                         checkLocationSetting();
                     } else {
                         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
@@ -110,11 +110,11 @@ public class GPSActivity extends AppCompatActivity {
                 .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(GPSActivity.this);
+                        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(PermitActivity.this);
                         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
                     }
                 })
-                .addOnFailureListener(GPSActivity.this, new OnFailureListener() {
+                .addOnFailureListener(PermitActivity.this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         int statusCode = ((ApiException) e).getStatusCode();
@@ -122,7 +122,7 @@ public class GPSActivity extends AppCompatActivity {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                 try {
                                     ResolvableApiException rae = (ResolvableApiException) e;
-                                    rae.startResolutionForResult(GPSActivity.this, GPS_UTIL_LOCATION_RESOLUTION_REQUEST_CODE);
+                                    rae.startResolutionForResult(PermitActivity.this, GPS_UTIL_LOCATION_RESOLUTION_REQUEST_CODE);
                                 } catch (IntentSender.SendIntentException sie) {
                                     Log.w(TAG, "unable to start resolution for result due to " + sie.getLocalizedMessage());
                                 }
@@ -156,9 +156,9 @@ public class GPSActivity extends AppCompatActivity {
             latitude = locationResult.getLastLocation().getLatitude();
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
 
-            Intent intent = new Intent(GPSActivity.this, MainActivity.class);
-            intent.putExtra("latitude", latitude);
-            intent.putExtra("longitude", longitude);
+            Intent intent = new Intent(PermitActivity.this, MainActivity.class);
+            //intent.putExtra("latitude", latitude);
+            //intent.putExtra("longitude", longitude);
             startActivity(intent);
             finish();
         }
