@@ -4,11 +4,15 @@ KakaoRestApiHelper.java
     단, 사용자쿼리를 인코딩하는 작업은 MainActivity.java의 testLocal()에서 수행하고 있음.
   
 MainActivity.java
-    GPS정보(from GPSActivity.java //이 기능을 실시간으로 실행하기 위해 StateService.java에 다시 구현하는 중), 
-    주소입력(from 사용자입력 //추후 사용자DB에서 가져오는 것으로 수정해야 함), 
-    주소정보(from KakaoRestApiHelper->searchAddress())를 가져오고 
-    두 위치 사이의 거리와 사용자 귀가 여부를 계산하는 코드.
-
-GPSActivity.java //이 파일은 삭제할 예정
-    GPS정보를 가져오기 위한 퍼미션확인 (노경이 퍼미션확인 코드로 합쳤음),
-    GPS정보를 인텐트로 MainActivity.java에 넘겨주는 기능 (실시간으로 구현하기 위해 StateService.java로 기능을 넘기고 있음)
+    주소입력(from 사용자입력 //추후 사용자DB에서 가져오는 것으로 수정해야 함),
+    주소정보(from KakaoRestApiHelper->searchAddress())를 가져오고
+    출발버튼	//출발시간이 되면 서비스를 실행하는 기능을 아직 구현 못해서 임시로 버튼에 할당
+	실시간위치정보서비스 실행
+	귀가여부 확인	//StateService로 옮길 예정
+	
+StateService.java
+	사용자의 귀가지 좌표와 실시간 GPS 좌표를 이용해 남은 거리를 계산
+	
+PermitActivity.java
+	GPSActivity에서 이름 바꿈
+	초기화면으로 설정되어 있으며 나머지 코드를 돌리는 데에 필요한 퍼미션 체크 수행하고 MainActivity로 넘어감

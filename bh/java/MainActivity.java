@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         //longitude = intent.getDoubleExtra("longitude", 0);
 
         //TextView location = findViewById(R.id.location);
-        //location.setText("임채원 님의 현재 위치는\n위도: " + latitude + "\n경도: " + longitude + "\n입니다.");
+        //location.setText("사용자 님의 현재 위치는\n위도: " + latitude + "\n경도: " + longitude + "\n입니다.");
 
         Button AddressInputbutton = (Button) findViewById(R.id.button);
         AddressInputbutton.setOnClickListener(new View.OnClickListener() {
@@ -76,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void test() throws IOException {
-        apiHelper.setAccessToken("c2847b9efc5ffdc52c09e3c0e74574bc");
-        apiHelper.setAdminKey("dc1acaf21e0a20787b24fa6206a3c212");
+        apiHelper.setAccessToken("********************************");
+        apiHelper.setAdminKey("********************************");
         //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>test is beginning soon!!!!!!!");
         testLocal();
     }
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         paramMap = new HashMap<String, String>();
         paramMap.put("format", "json");
 
-        //paramMap.put("query", "서울특별시 통일로 71가길 8");
+        //paramMap.put("query", "성북구 안암로 145");
         paramMap.put("query", inputHome);
 
         //paramMap.put("page", integer);
@@ -117,20 +117,20 @@ public class MainActivity extends AppCompatActivity {
     public void checkHomecoming() {
 
         TextView homeInfo = findViewById(R.id.homeInfo);
-        homeInfo.setText("임채원 님의 귀가지는\n \"  " + search_result[0] +"  \"\n으로 설정되어 있습니다.\n\n" +
+        homeInfo.setText("사용자 님의 귀가지는\n \"  " + search_result[0] +"  \"\n으로 설정되어 있습니다.\n\n" +
                 "귀가지의 위치는\n위도 : " + search_result[2] + "\n경도 : " + search_result[1] + "\n입니다.");
 
         TextView howFar = findViewById(R.id.howFar);
-        howFar.setText("임채원 님의 현재위치에서 귀가지까지의 거리는\n " + distance + " km입니다.");   //distance should be taken from StateService
+        howFar.setText("사용자 님의 현재위치에서 귀가지까지의 거리는\n " + distance + " km입니다.");   //distance should be taken from StateService
         /*
         state = distance > 0.3 ? userState.DEPART : userState.ARRIVE;
 
         TextView stateText = findViewById(R.id.stateText);
 
         if (state == userState.ARRIVE)
-            stateText.setText("임채원 님은 현재 귀가 상태입니다.\n안녕히 주무세요!");
+            stateText.setText("사용자 님은 현재 귀가 상태입니다.\n안녕히 주무세요!");
         else
-            stateText.setText("임채원 님은 현재 미귀가 상태입니다.\n얼른 집에 가세요-_-;");*/
+            stateText.setText("사용자 님은 현재 미귀가 상태입니다.\n얼른 집에 가세요-_-;");*/
     }
 
     //StateService 시작. 인텐트로 사용자 귀가지의 위치정보를 전달

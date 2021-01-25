@@ -22,7 +22,7 @@
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="d182963c89c82c9f0ca53d1a6a85df94" />
+            android:value="********************************" />
 
         <service
             android:name=".StateService"

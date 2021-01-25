@@ -5,7 +5,7 @@
         귀가한 사실이 확인되면 자동으로 종료됩니다.
     </string>
     <string name="ServiceNotification_title">개집찾 내위치 알림</string>
-    <string name="ServiceNotification_message"><![CDATA[나의 안전한 귀가를 확인하기 위해 <개집찾>에서 위치정보를 읽어오고 있습니다]]></string>
+    <string name="ServiceNotification_message">나의 안전한 귀가를 확인하기 위해 개집찾에서 위치정보를 읽어오고 있습니다</string>
     <string name="ServiceTicker_text">티커가 뭐임</string>
 
     <string name="SplashNotice">권한설정을 확인중입니다</string>
