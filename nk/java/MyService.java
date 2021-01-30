@@ -11,16 +11,22 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MyService extends Service {        // 기본 개인 세팅?
     private static final String CHANNEL_ID = "ForegroundServiceChannel";
 
     int a = 2;
     Notification notification;
-
-    //Toast toast;
-
     //String UserID = "123";
 
 
@@ -41,49 +47,65 @@ public class MyService extends Service {        // 기본 개인 세팅?
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("술기로운 귀가생활")
+                .setContentTitle("개집찾")
                 .setContentText("안전한 귀가를 위해 앱이 실행 중 입니다.")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(pendingIntent)
                 //.setPriority(Notification.PRIORITY_MAX)
                 .build();
 
-
-
-        // 토스트 알림 위한 기본 구성
-        /*Context context = getApplicationContext();
-        CharSequence text = "Hello toast!";
-        int duration = Toast.LENGTH_SHORT;
-        toast = Toast.makeText(context, text, duration);*/
-
-        Log.d("service","이게 잘 나오는지 한번 보자!!!!");
-        /*Timer timer = new Timer();
-        TimerTask TT = new TimerTask() {
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference dataref = mDatabase.getReference("users").child("123").child("room").child("0");
+        dataref.addChildEventListener(new ChildEventListener() {        // 리스너 달고
             @Override
-            public void run() {
-                Log.d("service", "notify" + a);
-                a++;
-                //toast.show();
-                //notificationManager.notify(a++, builder.build());
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
             }
-        };
-        timer.schedule(TT, 0, 10000); //Timer 실행*/
 
-        /* 시간 알람 >>>> 이건 테스트용이니까.
-            실제로 만들 때는 처음에 앱 실행하면 알람 보내고, 알람 리시버로 db 접근해서 정보 가져오게 하기.
-            그 뒤로는 한 시간에 한 번 씩으로 울리게 해서 정보 한 시간에 한 번 씩 가져오게.
-            정보 가져와서 알림 추가하는 것까지.
-            일단 MyService에서 알람 시간이 되면 Alarm.class 열고, 거기에서 알람 추가하는 서비스로 연결하면 될 듯.
-            그래서 그 알람 추가하는 서비스로 이동하면 거기서 알람 추가. 요거요거 하면 될 듯.*/
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-        /*  db 읽기
-            유저가 어느 방에 들어 있는지 확인. 어느 방에 있는지 알았다면, AddAlarm 서비스로 넘어가서 알람 추가
-            만약 어떤 방이 삭제 됐다면, onChildRemoved로 인지하고, AddAlarm 서비스로 넘어가서 알람 삭제
-            알람 번호는 즉 requestcode는 방 번호로 구분하자!
-        */
+                String state = snapshot.getValue().toString();
+                System.out.println(state);
+                System.out.println("---");
+                System.out.println(snapshot);
+
+                //System.out.println(previousChildName);
+                if (state.equals("3")){
+                    stopfunction();
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         startForeground(1, notification);
+
+        Log.d("test", "start F");
+
+
+
     }
+
+    public void stopfunction(){
+        Log.d("test", "stop FFF");
+        stopForeground(true);
+        stopSelf();
+    }
+
 
     @Override
     public IBinder onBind(Intent intent) {
