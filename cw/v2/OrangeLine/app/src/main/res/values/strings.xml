@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">OrangeLine</string>
+    <string name="kakao_native_key">kakao888f37712e36c6d3c4d015c855651add</string>
+
+    // content Description
+    <string name="kakao">Kakao</string>
+</resources>
