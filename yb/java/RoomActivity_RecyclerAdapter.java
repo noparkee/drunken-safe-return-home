@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 public class RoomActivity_RecyclerAdapter extends RecyclerView.Adapter<RoomActivity_RecyclerAdapter.ViewHolder> {
 
     public String UserId;
-    int roomNumber;
+    public int roomNumber;
     public LocalDateTime[] appTimes;
     public String[] appPlaces;
     public String[] roomNames;

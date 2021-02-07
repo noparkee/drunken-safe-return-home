@@ -32,10 +32,11 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
     public String RoomName;
     public LocalDateTime AppTime;
     public int RoomId;
-
     public Context context;
     public Activity activity;
     int numOfPeople;
+
+    public String [] userIds;
     public LocalDateTime []arrTimes;
     public LocalDateTime []depTimes;
     public String [] names;
@@ -68,8 +69,8 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
         arrTimes = new LocalDateTime[numOfPeople];
         depTimes = new LocalDateTime[numOfPeople];
         names = new String[numOfPeople];
-        states = new int[numOfPeople]; // 귀가 전 = 1, 귀가 중 = 2, 귀가 완료 = 3, 미귀가(도착 시간 초과했는데도 귀가 아닐 때) = 4 이렇게 네 가지 상태
-
+        states = new int[numOfPeople]; // 귀가 전 = 0, 귀가 중 = 1, 귀가 완료 = 2, 미귀가(도착 시간 초과했는데도 귀가 아닐 때) = 3 이렇게 네 가지 상태
+        userIds = new String[numOfPeople];
         AppTime = LocalDateTime.parse("2020-09-01T20:00:00");
 
         depTimes[0] = LocalDateTime.parse("2020-09-01T21:00:00");
@@ -87,10 +88,16 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
         names[2] = "임채원";
         names[3] = "소병희";
 
-        states[0] = 1;
-        states[1] = 1;
-        states[2] = 2;
-        states[3] = 3;
+        states[0] = 0;
+        states[1] = 0;
+        states[2] = 1;
+        states[3] = 2;
+
+        userIds[0] = "123";
+        userIds[1] = "456";
+        userIds[2] = "789";
+        userIds[3] = "135";
+
 
         TextView roomNameTV = activity.findViewById(R.id.roomName);
        TextView appTimeTV = activity.findViewById(R.id.appTime);
@@ -102,6 +109,7 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
 
     public LocalDateTime[] appTimes;
     public class ViewHolder  extends RecyclerView.ViewHolder{
+        public int index;
         public ImageView profileImage;
         public TextView name;
         public TextView detail;
@@ -131,6 +139,7 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Toast.makeText(activity, "귀가 처리 완료" ,Toast.LENGTH_SHORT);
                             // DB에서 귀가 완료라고 수정해줘야 되나? 그래야 다른 사람들 화면에 공유되나?
+                            states[index] = 3;
                             state.setText("귀가 완료");
                             state.setBackgroundColor(Color.rgb(100, 255, 100));
                         }
@@ -151,6 +160,7 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull RoomActivity2_RecyclerAdapter.ViewHolder holder, int position) {
+        holder.index = position;
         holder.name.setText(names[position]);
        /* appTimes[i].getMonthValue() + "월 "+
                 appTimes[i].getDayOfMonth() + "일 " + appTimes[i].getHour() + "시 " + appTimes[i].getMinute() + "분 ";*/
@@ -159,11 +169,16 @@ public class RoomActivity2_RecyclerAdapter extends RecyclerView.Adapter<RoomActi
         + "시 " + arrTimes[position].getMinute() + "분");
         //holder.detail.setText(depTimes[position].toString() + " >> " + arrTimes[position].toString());
         holder.profileImage.setImageResource(images[position]);
+
+       /* if(userIds[position] == UserId){
+            holder.itemView.setBackgroundColor(Color.rgb(255, 255, 150));
+        }*/
+
         switch(states[position]){
-            case 1: holder.state.setText("귀가 전"); holder.state.setBackgroundColor(Color.rgb(100, 100, 255)); break;
-            case 2: holder.state.setText("귀가 중"); holder.state.setBackgroundColor(Color.rgb(255, 255, 0)); break;
-            case 3: holder.state.setText("귀가 완료"); holder.state.setBackgroundColor(Color.rgb(100, 255, 100)); break;
-            case 4: holder.state.setText("미귀가"); holder.state.setBackgroundColor(Color.rgb(255, 0, 0)); break;
+            case 0: holder.state.setText("귀가 전"); holder.state.setBackgroundColor(Color.rgb(100, 100, 255)); break;
+            case 1: holder.state.setText("귀가 중"); holder.state.setBackgroundColor(Color.rgb(255, 255, 0)); break;
+            case 2: holder.state.setText("귀가 완료"); holder.state.setBackgroundColor(Color.rgb(100, 255, 100)); break;
+            case 3: holder.state.setText("미귀가"); holder.state.setBackgroundColor(Color.rgb(255, 0, 0)); break;
         }
     }
 
